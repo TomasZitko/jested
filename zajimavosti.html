@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Ještěd - Zajímavosti</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* --- Ještěd Black & White Design System (NEW) --- */
+        :root {
+            --font-display: 'Anton', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+            --color-light: #ffffff;
+            --color-muted: #797979;
+            --color-dark: #0F0F0F;
+            --color-darker: #050505;
+            --color-border: #222222;
+            --transition-duration: 0.5s;
+            --bezier-ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --color-border-light: #3a3a3a;
+        }
+
+        /* --- Base & Reset --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body, html {
+            font-family: var(--font-body);
+            background-color: var(--color-dark);
+            color: var(--color-light);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Hide custom cursor on touch devices */
+        @media (hover: hover) and (pointer: fine) {
+            body, html {
+                cursor: none;
+            }
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+
+        /* --- Animations --- */
+        @keyframes fadeInPage {
+            to { opacity: 1; }
+        }
+
+        @keyframes revealUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Custom Cursor (NEW) --- */
+        .custom-cursor {
+            position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+            background-color: var(--color-light); border-radius: 50%;
+            pointer-events: none; transform: translate(-50%, -50%);
+            z-index: 9999; transition: width 0.3s var(--bezier-ease), height 0.3s var(--bezier-ease), background-color 0.3s var(--bezier-ease);
+        }
+        .custom-cursor.grow {
+            width: 70px; height: 70px; background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Header/Navigation (from homepage) --- */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: rgba(15, 15, 15, 0.9); /* Slightly transparent background */
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .main-header .logo {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--color-light);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .main-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .main-nav a {
+            color: var(--color-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
+        .main-nav a:hover {
+            color: var(--color-muted);
+        }
+
+        /* --- Hero Section for Zajímavosti --- */
+        #zajimavosti-hero {
+            position: relative;
+            height: 60vh; /* Shorter hero for content pages */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            text-align: center;
+            background-image: url('https://i.postimg.cc/rwRkQH7J/j-hero-1.jpg'); /* Reusing homepage hero image */
+            background-size: cover;
+            background-position: center;
+        }
+
+        #zajimavosti-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
+            z-index: 1;
+        }
+
+        .zajimavosti-hero-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .zajimavosti-hero-content h1 {
+            font-family: var(--font-display);
+            font-size: clamp(4rem, 10vw, 8rem);
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            margin: 0;
+            animation: revealUp 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        .zajimavosti-hero-content p {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 1rem;
+            max-width: 60ch;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+
+        /* --- Fun Facts Section --- */
+        #fun-facts {
+            padding: 8rem 0;
+            background-color: var(--color-darker);
+        }
+
+        .fun-facts-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column for full width cards */
+            gap: 4rem; /* More space between cards */
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .fact-card {
+            background-color: var(--color-dark);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex; /* Use flexbox for internal layout */
+            flex-direction: row; /* Default: image left, text right */
+            align-items: center; /* Align items vertically */
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        .fact-card:nth-child(even) { /* Alternate layout for even cards */
+            flex-direction: row-reverse; /* Text left, image right */
+            animation-delay: 0.2s;
+        }
+
+        .fact-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .fact-image-container {
+            flex: 1; /* Take up equal space */
+            min-width: 50%; /* Ensure image takes at least half width */
+            height: 400px; /* Fixed height for consistency */
+            overflow: hidden;
+        }
+
+        .fact-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block; /* Remove extra space below image */
+            transition: transform 0.5s ease;
+        }
+
+        .fact-card:hover .fact-image {
+            transform: scale(1.05); /* Subtle zoom on hover */
+        }
+
+        .fact-content {
+            flex: 1; /* Take up equal space */
+            padding: 3rem; /* More padding for content */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically */
+            min-width: 50%; /* Ensure content takes at least half width */
+        }
+
+        .fact-content h3 {
+            font-family: var(--font-display);
+            font-size: 2.8rem; /* Larger headline */
+            color: var(--color-light);
+            margin-bottom: 1.5rem; /* More space below headline */
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .fact-content p {
+            font-size: 1.05rem; /* Slightly larger body text */
+            line-height: 1.8;
+            color: var(--color-muted);
+            margin-bottom: 0; /* Remove bottom margin if it's the last element */
+        }
+
+        /* --- Footer (from homepage) --- */
+        .site-footer {
+            padding-top: 8rem;
+            background-color: var(--color-darker);
+            border-top: 1px solid var(--color-border);
+        }
+        .footer-bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        .bento-box {
+            background-color: var(--color-dark);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .bento-box:hover { background-color: #1a1a1a; border-color: #333; }
+        
+        .bento-box.logo { grid-column: 1 / 3; }
+        .bento-box.nav { grid-column: 3 / 5; }
+        .bento-box.contact { grid-column: 1 / 2; }
+        .bento-box.socials { grid-column: 2 / 3; }
+        .bento-box.newsletter-cta { grid-column: 3 / 5; }
+
+        .bento-box h3 { font-family: var(--font-display); font-size: 3rem; text-transform: uppercase; }
+        .bento-box p { color: var(--color-muted); max-width: 40ch; margin-top: 1rem; }
+        .bento-box h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-muted); margin-bottom: 1.5rem; }
+        .bento-box ul { list-style: none; }
+        .bento-box a { color: var(--color-light); text-decoration: none; line-height: 2.2; font-weight: 500; }
+        .bento-box a:hover { text-decoration: underline; }
+        .bento-box .social-links { display: flex; gap: 1.5rem; }
+        .bento-box .social-links a { font-size: 1.5rem; }
+
+        .bento-box.newsletter-cta { background: var(--color-light); color: var(--color-darker); }
+        .bento-box.newsletter-cta h4 { color: #555; }
+        .bento-box.newsletter-cta p { color: #333; margin-bottom: 1.5rem; }
+        .newsletter-form { display: flex; }
+        .newsletter-form input {
+            flex-grow: 1; border: 1px solid #ccc; background: #fff;
+            padding: 0.8rem 1rem; color: #000; font-size: 1rem;
+            border-radius: 6px 0 0 6px;
+        }
+        .newsletter-form button {
+            background: var(--color-darker); color: var(--color-light); border: none;
+            padding: 0.8rem 1.5rem; font-weight: 500; cursor: pointer;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .footer-signoff {
+            margin-top: 10rem;
+            padding-bottom: 4rem; 
+            text-align: center;
+        }
+        .footer-signoff-text {
+            font-family: var(--font-display);
+            font-size: clamp(10rem, 22vw, 25rem);
+            line-height: 0.8;
+            text-transform: uppercase;
+            color: var(--color-border);
+        }
+
+        .footer-bottom {
+            text-align: center; padding: 3rem 0;
+            border-top: 1px solid var(--color-border); color: var(--color-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 1024px) {
+            .footer-bento-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .bento-box.logo,
+            .bento-box.nav,
+            .bento-box.newsletter-cta {
+                grid-column: 1 / -1;
+            }
+            .bento-box.contact {
+                grid-column: 1 / 2;
+            }
+            .bento-box.socials {
+                grid-column: 2 / 3;
+            }
+
+            .fact-card {
+                flex-direction: column; /* Stack image and text on smaller screens */
+            }
+            .fact-card:nth-child(even) {
+                flex-direction: column; /* Ensure stacking for all cards */
+            }
+            .fact-image-container {
+                min-width: 100%;
+                height: 300px; /* Adjust height for stacked layout */
+            }
+            .fact-content {
+                min-width: 100%;
+                padding: 2rem; /* Adjust padding for smaller screens */
+            }
+            .fact-content h3 {
+                font-size: 2.2rem; /* Adjust headline size */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-nav {
+                display: none; /* Hide navigation on small screens for simplicity, could be a hamburger menu */
+            }
+            .main-header {
+                justify-content: center;
+            }
+            .zajimavosti-hero-content h1 {
+                font-size: clamp(3rem, 15vw, 6rem);
+            }
+            .zajimavosti-hero-content p {
+                font-size: 0.9rem;
+            }
+            #fun-facts {
+                padding: 5rem 0;
+            }
+            .fun-facts-grid {
+                gap: 2rem;
+            }
+            .fact-image-container {
+                height: 250px;
+            }
+            .fact-content {
+                padding: 1.5rem;
+            }
+            .fact-content h3 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .footer-bento-grid {
+                grid-template-columns: 1fr;
+            }
+            .bento-box.logo, .bento-box.newsletter-cta, .bento-box.nav, .bento-box.contact, .bento-box.socials {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .footer-signoff-text {
+                font-size: clamp(8rem, 20vw, 15rem);
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="custom-cursor"></div>
+
+    <!-- Header (from homepage) -->
+    <header class="main-header">
+        <a href="homepage.html" class="logo interactive">JEŠTĚD</a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="#" class="interactive">Pokoje</a></li>
+                <li><a href="#" class="interactive">Restaurace</a></li>
+                <li><a href="#" class="interactive">Pro Firmy</a></li>
+                <li><a href="zajimavosti.html" class="interactive">Zajímavosti</a></li>
+                <li><a href="#contact" class="interactive">Kontakt</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section for Zajímavosti -->
+    <section id="zajimavosti-hero">
+        <div class="zajimavosti-hero-content">
+            <h1>Zajímavosti</h1>
+            <p>Objevte fascinující příběhy a skryté detaily Hotelu Ještěd.</p>
+        </div>
+    </section>
+
+    <!-- Fun Facts Section -->
+    <section id="fun-facts">
+        <div class="fun-facts-grid">
+
+            <div class="fact-card">
+                <div class="fact-image-container">
+                    <img src="https://placehold.co/600x400/0F0F0F/FFFFFF?text=Křeslo+Jiřího+Suchomela" alt="Křeslo Jiřího Suchomela" class="fact-image">
+                </div>
+                <div class="fact-content">
+                    <h3>Křeslo Jiřího Suchomela</h3>
+                    <p>
+                        Původní text o křesle Jiřího Suchomela nebyl dodán. Zde je placeholder text.
+                        Křeslo Jiřího Suchomela je ikonický kus nábytku, který se stal symbolem designu hotelu Ještěd.
+                        Jeho unikátní tvar a pohodlí přitahují pozornost návštěvníků.
+                    </p>
+                </div>
+            </div>
+
+            <div class="fact-card">
+                <div class="fact-image-container">
+                    <img src="https://i.postimg.cc/8PRD45rm/hotel-1.jpg" alt="Dítě z Marsu" class="fact-image">
+                </div>
+                <div class="fact-content">
+                    <h3>Dítě z Marsu</h3>
+                    <p>
+                        Socha akademického sochaře Jaroslava Róny zobrazuje plačícího Marťana, který se ztratil ve vesmíru. Bronzová socha je 170 cm vysoká a od roku 2010 je trvale umístěna pod vrcholem Ještědu. Autor říká, že právě tady je malému Marťanovi nejlépe – do vesmíru to má totiž nejblíž. Dnes už je ale jasné, že se tu cítí jako doma. Pláče už jen na oko a občas loudí zmrzlinu.
+                    </p>
+                </div>
+            </div>
+
+            <div class="fact-card">
+                <div class="fact-image-container">
+                    <img src="https://placehold.co/600x400/0F0F0F/FFFFFF?text=Srpen+1968+na+Ještědu" alt="Srpen 1968 na Ještědu" class="fact-image">
+                </div>
+                <div class="fact-content">
+                    <h3>Srpen 1968 na Ještědu</h3>
+                    <p>
+                        V srpnu 1968 zde, pod rozestavěnou stavbou Ještědu, vzniklo provizorní svobodné vysílání zvané Studio Sever. Vysílali z něj například Václav Havel a Jan Tříska, kteří se tehdy náhodně ocitli v Liberci. Po okupaci sovětskými vojsky se spolu s dalšími zapojili do odporu i skrze média. Studio Sever ukončilo činnost, když bylo zřejmé, že ozbrojený odpor nemá šanci na úspěch. Sovětská vojska v zemi zůstala až do roku 1991. Připomíná nám to, že svoboda není samozřejmost a je třeba ji chránit.
+                    </p>
+                </div>
+            </div>
+
+            <div class="fact-card">
+                <div class="fact-image-container">
+                    <img src="https://placehold.co/600x400/0F0F0F/FFFFFF?text=Rohanův+kámen" alt="Rohanův Kámen" class="fact-image">
+                </div>
+                <div class="fact-content">
+                    <h3>Rohanův Kámen</h3>
+                    <p>
+                        Historický obelisk z roku 1838 připomíná, že jižní svahy Ještědu koupil kníže Rohan a nechal zde postavit sloup se znakem svého rodu. Stojíte-li u něj, nacházíte se přesně na hranici dvou někdejších panství – rohanského a clam-gallasovského. V roce 2019 prošel kámen důkladnou rekonstrukcí. Opravu inicioval hotel Ještěd ve spolupráci s Jizersko-ještědským horským spolkem.
+                    </p>
+                </div>
+            </div>
+
+            <div class="fact-card">
+                <div class="fact-image-container">
+                    <img src="https://placehold.co/600x400/0F0F0F/FFFFFF?text=Kříž+na+vrcholu+hory" alt="Kříž na vrcholu hory" class="fact-image">
+                </div>
+                <div class="fact-content">
+                    <h3>Kříž na vrcholu hory</h3>
+                    <p>
+                        Na vrcholu hory Ještěd dnes stojí již devátý kříž podle historických záznamů. Ten současný byl vztyčen 1. června 1990 nadšenci po sametové revoluci. Je vyroben z akátového dřeva napuštěného býčí krví a nachází se na vyhlídce směrem k Liberci. První kamenný kříž zde stál už v roce 1737.
+                    </p>
+                </div>
+            </div>
+
+            <div class="fact-card">
+                <div class="fact-image-container">
+                    <img src="https://placehold.co/600x400/0F0F0F/FFFFFF?text=Apartmá" alt="Apartmá" class="fact-image">
+                </div>
+                <div class="fact-content">
+                    <h3>Apartmá</h3>
+                    <p>
+                        Apartmá s nejlepším výhledem, dvojnásobnou plochou běžného pokoje a jedinou vanou v celé budově. Původně vybaveno modulovým nábytkem architekta Otakara Binara, ale krátce po otevření bylo zařízení nahrazeno barokním nábytkem ve stylu Ludvíka XIV. Dnes už je původní vybavení v muzeu, aktuální podoba apartmá kombinuje prvky ze 70. let s moderními úpravami.
+                    </p>
+                </div>
+            </div>
+
+            <div class="fact-card">
+                <div class="fact-image-container">
+                    <img src="https://placehold.co/600x400/0F0F0F/FFFFFF?text=Betonový+tubus" alt="Betonový tubus" class="fact-image">
+                </div>
+                <div class="fact-content">
+                    <h3>Betonový Tubus – Nosná Konstrukce Ještědu</h3>
+                    <p>
+                        Nosnou konstrukci tvoří dva do sebe zasunuté betonové válce. Vnější má průměr 13 metrů a vede skrz něj vstup do pokojů a restaurace. Vnitřní válec má průměr 5 metrů a uvnitř něj se nachází schodiště. Tento důmyslný systém nese celou stavbu díky zavěšení jednotlivých pater na ocelové konstrukce.
+                    </p>
+                </div>
+            </div>
+
+            <div class="fact-card">
+                <div class="fact-image-container">
+                    <img src="https://placehold.co/600x400/0F0F0F/FFFFFF?text=Houpací+vajíčka" alt="Houpací vajíčka" class="fact-image">
+                </div>
+                <div class="fact-content">
+                    <h3>Houpací Vajíčka</h3>
+                    <p>
+                        Designový prvek architekta Otakara Binara z 70. let. Kvůli plánovanému hospodářství nebylo možné sehnat karabiny pro jejich zavěšení – pomohli až hasiči, kteří Ještědu darovali tři karabiny. V roce 2014 prošla vajíčka kompletní rekonstrukcí včetně konstrukce i potahů, které vybral sám autor, aby co nejvíce odpovídaly původnímu vzhledu.
+                    </p>
+                </div>
+            </div>
+
+            <div class="fact-card">
+                <div class="fact-image-container">
+                    <img src="https://placehold.co/600x400/0F0F0F/FFFFFF?text=Kovaná+mříž" alt="Kovaná mříž" class="fact-image">
+                </div>
+                <div class="fact-content">
+                    <h3>Kovaná Mříž v Hotelu</h3>
+                    <p>
+                        V hotelové hale se nachází výrazná kovaná mříž, kterou vytvořil akademický malíř Jaroslav Klápště. Mříž je složená ze zbytků zemědělských strojů a všechny části jsou pevně spojeny. Její umístění z ní činí nepřehlédnutelný prvek stavby, který kombinuje výtvarné umění se symbolikou doby.
+                    </p>
+                </div>
+            </div>
+
+            <div class="fact-card">
+                <div class="fact-image-container">
+                    <img src="https://placehold.co/600x400/0F0F0F/FFFFFF?text=Bílé+obklady+stěn" alt="Bílé obklady stěn" class="fact-image">
+                </div>
+                <div class="fact-content">
+                    <h3>Bílé Obklady Stěn</h3>
+                    <p>
+                        Původní text o bílých obkladech stěn nebyl dodán. Zde je placeholder text.
+                        Bílé obklady stěn přispívají k modernímu a minimalistickému vzhledu interiéru hotelu, odrážející světlo a prostor.
+                    </p>
+                </div>
+            </div>
+
+            <div class="fact-card">
+                <div class="fact-image-container">
+                    <img src="https://placehold.co/600x400/0F0F0F/FFFFFF?text=Pád+meteoritu" alt="Pád meteoritu" class="fact-image">
+                </div>
+                <div class="fact-content">
+                    <h3>Pád Meteoritu</h3>
+                    <p>
+                        Původní text o pádu meteoritu nebyl dodán. Zde je placeholder text.
+                        Příběh o pádu meteoritu na Ještědu je zajímavou místní legendou, která dodává místu mystický nádech.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer (from homepage) -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bento-grid">
+                <div class="bento-box logo">
+                    <h3>JEŠTĚD</h3>
+                    <p>Ikona nad oblaky. Cíl pro dobrodruhy, snílky a znalce designu.</p>
+                </div>
+                <div class="bento-box nav">
+                    <h4>Navigace</h4>
+                    <ul>
+                        <li><a href="#" class="interactive">Pokoje</a></li>
+                        <li><a href="#" class="interactive">Restaurace</a></li>
+                        <li><a href="#" class="interactive">Pro Firmy</a></li>
+                        <li><a href="zajimavosti.html" class="interactive">Zajímavosti</a></li>
+                        <li><a href="#contact" class="interactive">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="bento-box contact">
+                    <h4>Kontakt</h4>
+                     <ul>
+                        <li><a href="tel:+420731658045" class="interactive">+420 731 658 045</a></li>
+                        <li><a href="mailto:recepce@jested.cz" class="interactive">recepce@jested.cz</a></li>
+                    </ul>
+                </div>
+                 <div class="bento-box socials">
+                    <h4>Sociální Sítě</h4>
+                     <div class="social-links">
+                        <a href="#" aria-label="Instagram" class="interactive"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook" class="interactive"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" aria-label="X" class="interactive"><i class="fa-brands fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="bento-box newsletter-cta interactive">
+                    <h4>Zůstaňte v Obraze</h4>
+                    <p>Získejte exkluzivní nabídky a novinky přímo do vaší schránky.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Váš email" required>
+                        <button type="submit" aria-label="Odeslat">→</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-signoff">
+            <div class="footer-signoff-text">JEŠTĚD</div>
+        </div>
+
+        <div class="container">
+             <div class="footer-bottom">
+                <p>© 2025 Hotel Ještěd. Všechna práva vyhrazena.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+        // GSAP functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // --- Custom Cursor Logic (from homepage) ---
+            const cursor = document.querySelector('.custom-cursor');
+            const interactiveElements = document.querySelectorAll('.interactive');
+            const moveCursor = (e) => {
+                gsap.to(cursor, { duration: 0.4, x: e.clientX, y: e.clientY, ease: 'power3.out' });
+            };
+            window.addEventListener('mousemove', moveCursor);
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+            });
+
+            // --- Fade-in for footer elements (from homepage) ---
+            const revealElements = document.querySelectorAll('.contact-grid, .bento-box, .footer-signoff');
+            revealElements.forEach(el => {
+                gsap.from(el, {
+                    opacity: 0,
+                    y: 50,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 90%',
+                        toggleActions: 'play none none none'
+                    }
+                });
+            });
+
+            // --- Fun Facts Card Fade-in Animation ---
+            const factCards = document.querySelectorAll('.fact-card');
+            factCards.forEach((card, index) => {
+                gsap.from(card, {
+                    opacity: 0,
+                    y: 50,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 90%',
+                        toggleActions: 'play none none none',
+                        once: true,
+                    },
+                    delay: index * 0.1 // Stagger the animation
+                });
+            });
+        });
+    </script>
+</body>
+</html>

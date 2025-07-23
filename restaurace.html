@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Ještěd - Restaurace</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* --- Ještěd Black & White Design System --- */
+        :root {
+            --font-display: 'Anton', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+            --color-light: #ffffff;
+            --color-muted: #999999;
+            --color-dark: #0F0F0F;
+            --color-darker: #050505;
+            --color-border: #222222;
+            --transition-duration: 0.5s;
+            --bezier-ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* --- Base & Global Styles --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-darker);
+            color: var(--color-light);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+         @media (hover: hover) and (pointer: fine) {
+            body {
+                cursor: none;
+            }
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+        
+        /* --- Custom Cursor --- */
+        .custom-cursor {
+            position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+            background-color: var(--color-light); border-radius: 50%;
+            pointer-events: none; transform: translate(-50%, -50%);
+            z-index: 10001; transition: width 0.3s var(--bezier-ease), height 0.3s var(--bezier-ease), background-color 0.3s var(--bezier-ease);
+        }
+        .custom-cursor.grow {
+            width: 70px; height: 70px; background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Site Header --- */
+        .site-header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.4s ease, padding 0.4s ease;
+        }
+        .site-header.scrolled {
+            background-color: rgba(15, 15, 15, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .header-logo a {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            text-decoration: none;
+            color: var(--color-light);
+            letter-spacing: 1px;
+        }
+        .main-nav { display: flex; gap: 2.5rem; }
+        .main-nav a {
+            color: var(--color-light); text-decoration: none;
+            text-transform: uppercase; font-size: 0.9rem;
+            font-weight: 500; position: relative;
+            padding: 0.5rem 0;
+        }
+        .main-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background-color: var(--color-light);
+            transition: width 0.4s var(--bezier-ease);
+        }
+        .main-nav a:hover::after { width: 100%; }
+        .mobile-nav-toggle { display: none; }
+
+
+        /* --- Reusable Components --- */
+        .section { padding: 10rem 0; }
+        .grid-layout { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; }
+        .cta-button {
+            display: inline-block; padding: 1rem 2.5rem; text-decoration: none;
+            font-weight: 500; border: 1px solid var(--color-border);
+            color: var(--color-light); transition: all 0.4s var(--bezier-ease);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        .cta-button:hover { background-color: var(--color-light); color: var(--color-darker); border-color: var(--color-light); }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 10vw, 9rem);
+            text-transform: uppercase; line-height: 0.9;
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+        
+        /* --- Hero Section (Restaurant Specific) --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://i.postimg.cc/k47t41Qd/restaurant-hero.jpg') no-repeat center center/cover;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-content { z-index: 2; padding: 1rem; }
+        .hero .main-headline {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            line-height: 1;
+            color: var(--color-light);
+            font-size: clamp(4rem, 12vw, 10rem);
+        }
+        .hero p {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 1rem;
+            font-weight: 300;
+            max-width: 60ch;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .hero .cta-button {
+            margin-top: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .hero-scroll-arrow {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        .scroll-link {
+            color: var(--color-light);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+        }
+        .scroll-link span {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+        .scroll-link i { font-size: 1.5rem; animation: bounce 2s infinite; }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(10px); }
+            60% { transform: translateY(5px); }
+        }
+
+        /* --- Restaurant Info Section --- */
+        #restaurant-info {
+            background-color: var(--color-dark);
+            padding: 8rem 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .info-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+        .info-block {
+            background-color: var(--color-darker);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+        .info-block h3 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+        .info-block p {
+            color: var(--color-muted);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+        .info-block strong {
+            color: var(--color-light);
+        }
+        .info-block .cta-button {
+            align-self: flex-start;
+        }
+
+        /* --- Philosophy Section --- */
+        #philosophy {
+            background-color: var(--color-darker);
+            padding: 10rem 0;
+        }
+        .philosophy-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .philosophy-text {
+            padding-right: 2rem;
+        }
+        .philosophy-text h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 2rem;
+        }
+        .philosophy-text p {
+            color: var(--color-muted);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        .philosophy-image {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .philosophy-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s var(--bezier-ease);
+        }
+        .philosophy-image:hover img {
+            transform: scale(1.05);
+        }
+        .philosophy-quote {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            padding: 1.5rem 2rem;
+            border-radius: 8px;
+            color: var(--color-light);
+            font-style: italic;
+            font-size: 1.1rem;
+            max-width: 80%;
+        }
+
+        /* --- Reservation Section --- */
+        #reservation {
+            background-color: var(--color-dark);
+            padding: 10rem 0;
+            border-top: 1px solid var(--color-border);
+        }
+        .reservation-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .reservation-text h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 2rem;
+        }
+        .reservation-text p {
+            color: var(--color-muted);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        .reservation-form-container {
+            background-color: var(--color-darker);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 3rem;
+        }
+        .reservation-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--color-light);
+            font-weight: 500;
+        }
+        .reservation-form input,
+        .reservation-form textarea,
+        .reservation-form select {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1.5rem;
+            background-color: #1a1a1a;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            color: var(--color-light);
+            font-family: var(--font-body);
+            font-size: 1rem;
+        }
+        .reservation-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .reservation-form input:focus,
+        .reservation-form textarea:focus,
+        .reservation-form select:focus {
+            outline: none;
+            border-color: var(--color-light);
+        }
+        .reservation-form .cta-button {
+            width: 100%;
+            text-align: center;
+            border-radius: 6px;
+        }
+
+        /* --- Events Section --- */
+        #events {
+            background-color: var(--color-darker);
+            padding: 10rem 0;
+            border-top: 1px solid var(--color-border);
+        }
+        .event-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+        .event-card {
+            background-color: var(--color-dark);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s var(--bezier-ease), box-shadow 0.4s var(--bezier-ease);
+        }
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .event-card-image {
+            height: 300px;
+            position: relative;
+        }
+        .event-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .event-card-content {
+            padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .event-card-content h3 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            text-transform: uppercase;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        .event-card-content p {
+            color: var(--color-muted);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            flex-grow: 1;
+        }
+        .event-card-content .cta-button {
+            align-self: flex-start;
+        }
+
+        /* --- Stay Overnight Section --- */
+        #stay-overnight {
+            background-color: var(--color-dark);
+            padding: 10rem 0;
+            border-top: 1px solid var(--color-border);
+        }
+        .stay-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .stay-image {
+            position: relative;
+            height: 450px;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .stay-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s var(--bezier-ease);
+        }
+        .stay-image:hover img {
+            transform: scale(1.05);
+        }
+        .stay-text h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 2rem;
+        }
+        .stay-text p {
+            color: var(--color-muted);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* --- Site Footer (from original) --- */
+        .footer-signoff {
+            padding: 8rem 0; 
+            text-align: center;
+            background-color: var(--color-dark);
+        }
+        .footer-signoff-text {
+            font-family: var(--font-display);
+            font-size: clamp(10rem, 22vw, 25rem);
+            line-height: 0.8;
+            text-transform: uppercase;
+            color: var(--color-border);
+        }
+        .site-footer {
+            padding: 8rem 0 0 0;
+            background-color: var(--color-dark);
+            border-top: 1px solid var(--color-border);
+        }
+        .footer-bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        .bento-box {
+            background-color: var(--color-darker);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .bento-box:hover { background-color: #1a1a1a; border-color: #333; }
+        .bento-box.logo { grid-column: 1 / 3; }
+        .bento-box.nav { grid-column: 3 / 5; }
+        .bento-box.contact { grid-column: 1 / 2; }
+        .bento-box.socials { grid-column: 2 / 3; }
+        .bento-box.newsletter-cta { grid-column: 3 / 5; }
+        .bento-box h3 { font-family: var(--font-display); font-size: 3rem; text-transform: uppercase; }
+        .bento-box p { color: var(--color-muted); max-width: 40ch; margin-top: 1rem; }
+        .bento-box h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-muted); margin-bottom: 1.5rem; }
+        .bento-box ul { list-style: none; }
+        .bento-box a { color: var(--color-light); text-decoration: none; line-height: 2.2; font-weight: 500; }
+        .bento-box a:hover { text-decoration: underline; }
+        .bento-box .social-links { display: flex; gap: 1.5rem; }
+        .bento-box .social-links a { font-size: 1.5rem; }
+        .bento-box.newsletter-cta { background: var(--color-light); color: var(--color-darker); }
+        .bento-box.newsletter-cta h4 { color: #555; }
+        .bento-box.newsletter-cta p { color: #333; margin-bottom: 1.5rem; }
+        .newsletter-form { display: flex; }
+        .newsletter-form input {
+            flex-grow: 1; border: 1px solid #ccc; background: #fff;
+            padding: 0.8rem 1rem; color: #000; font-size: 1rem;
+            border-radius: 6px 0 0 6px;
+        }
+        .newsletter-form button {
+            background: var(--color-darker); color: var(--color-light); border: none;
+            padding: 0.8rem 1.5rem; font-weight: 500; cursor: pointer;
+            border-radius: 0 6px 6px 0;
+        }
+        .footer-bottom {
+            text-align: center; padding: 2rem 0 2rem 0;
+            border-top: 1px solid var(--color-border); color: var(--color-muted);
+            font-size: 0.9rem;
+            background: var(--color-dark);
+            margin-top: 0;
+            width: 100vw;
+            left: 50%;
+            right: 50%;
+            position: relative;
+            transform: translateX(-50%);
+            box-sizing: border-box;
+        }
+        
+        /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+            .footer-bento-grid { grid-template-columns: 1fr 1fr; }
+            .bento-box.logo, .bento-box.nav, .bento-box.newsletter-cta { grid-column: 1 / -1; }
+            .bento-box.contact { grid-column: 1 / 2; }
+            .bento-box.socials { grid-column: 2 / 3; }
+
+            .philosophy-content, .reservation-content, .stay-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            .philosophy-image, .stay-image {
+                height: 350px;
+            }
+            .philosophy-text, .reservation-text {
+                padding-right: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section { padding: 6rem 0; }
+            .main-nav {
+                position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+                background-color: var(--color-darker);
+                flex-direction: column; justify-content: center; align-items: center;
+                transition: right 0.6s var(--bezier-ease);
+            }
+            .main-nav.is-active { right: 0; }
+            .main-nav a { font-size: 2rem; }
+            .mobile-nav-toggle {
+                display: block; z-index: 1001;
+                background: none; border: none; cursor: pointer;
+            }
+            .hamburger-icon { color: var(--color-light); font-size: 1.5rem; }
+            .section-title { margin-bottom: 3rem; }
+            .info-columns, .event-card-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .info-block {
+                padding: 2rem;
+            }
+        }
+
+         @media (max-width: 600px) {
+             .footer-bento-grid { grid-template-columns: 1fr; }
+             .bento-box.logo, .bento-box.newsletter-cta, .bento-box.nav, .bento-box.contact, .bento-box.socials {
+                 grid-column: 1 / -1;
+             }
+         }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor"></div>
+
+    <header class="site-header">
+        <div class="header-logo"><a href="#" class="interactive">Ještěd</a></div>
+        <nav class="main-nav">
+            <a href="#" class="interactive">Domů</a>
+            <a href="#" class="interactive">Pokoje</a>
+            <a href="#" class="interactive">Restaurace</a>
+            <a href="#" class="interactive">Kontakt</a>
+        </nav>
+        <button class="mobile-nav-toggle interactive" aria-label="Toggle navigation">
+            <i class="fa-solid fa-bars hamburger-icon"></i>
+        </button>
+    </header>
+
+    <main>
+        
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <h1 class="main-headline">Restaurace</h1>
+                <p>Vítejte v restauraci nad oblaky. Otvíráme každý den v 10 hodin s nápoji a polévkou, v 11 hodin s plnou nabídkou.</p>
+                <a href="#reservation" class="cta-button interactive">Rezervovat stůl</a>
+            </div>
+            <div class="hero-scroll-arrow">
+                 <a href="#restaurant-info" class="scroll-link interactive">
+                    <span>Objevujte</span>
+                    <i class="fa-solid fa-arrow-down"></i>
+                </a>
+            </div>
+        </section>
+
+        <section class="section" id="restaurant-info">
+            <div class="container">
+                <h2 class="section-title">Otevírací Doba</h2>
+                <div class="info-columns">
+                    <div class="info-block">
+                        <h3>Hlavní Restaurace</h3>
+                        <p>Restaurace je otevřena denně od <strong>11:00 hodin</strong> s plnou nabídkou denních jídel. Ty si můžete objednat do <strong>17:15 hodin</strong>, případně do <strong>18:00 hodin</strong> polévky z denního menu. Večerní menu nabízíme od <strong>18:00 hodin do 21:30 hodin</strong>.</p>
+                        <p>Běžně se restaurace zavírá pro veřejnost ve <strong>22:00 hodin</strong>, pro ubytované o půlnoci.</p>
+                        <a href="tel:+420731658045" class="cta-button interactive">Volejte pro rezervaci</a>
+                    </div>
+                    <div class="info-block">
+                        <h3>Bistro & Venkovní Občerstvení</h3>
+                        <p>Sezónně také otvírá <strong>Bistro 1012</strong> na ochozu od <strong>9:00 do 17:00 hodin</strong>.</p>
+                        <p>V létě je za hezkého počasí k dispozici i venkovní <strong>občerstvení Rohanka</strong> od <strong>9:00 hodin</strong>. V létě si na terase můžete nově koupit i výbornou <strong>kopečkovou zmrzlinu</strong> od vyhlášeného regionálního dodavatele.</p>
+                        <p>Vychovaní psi do restaurace mohou.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="philosophy">
+            <div class="container">
+                <div class="philosophy-content">
+                    <div class="philosophy-text">
+                        <h2>Proč u nás stojí jídlo o něco víc?</h2>
+                        <p>Protože nechutná jako <strong>polotovar</strong>. Někdo si dává svíčkovou z mražené směsi, my loupeme, krájíme, pečeme a vaříme – od základu. Nepoužíváme dochucovadla, ale trpělivost. Knedlíky nejsou kupované, ale z rukou našeho kuchaře.</p>
+                        <p>Naše <strong>suroviny bereme od malých lokálních dodavatelů a BIO farem</strong> – protože víme, že na <strong>kvalitě</strong> záleží. Tohle jídlo má za sebou příběh. Děkujeme, že ho ochutnáváte.</p>
+                    </div>
+                    <div class="philosophy-image">
+                        <img src="https://i.postimg.cc/Nj0W4s4w/restaurant-food.jpg" alt="Detailní záběr na krásně připravené jídlo v restauraci">
+                        <div class="philosophy-quote">"Kvalita, trpělivost a lokální suroviny – to je náš recept na nezapomenutelný zážitek."</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="reservation">
+            <div class="container">
+                <div class="reservation-content">
+                    <div class="reservation-text">
+                        <h2>Rezervace stolů</h2>
+                        <p>Vždy bude lepší, když si svůj stůl rezervujete předem. Zejména večer, pokud plánujete slavnostnější večeři a nechcete nic ponechat náhodě.</p>
+                        <p><strong>Nejlépe bude, když nám zavoláte a domluvíte se s námi přímo.</strong> Rezervace přijímáme v čase od <strong>9:00 do 20:00</strong>, stůl lze rezervovat na čas nejdéle do <strong>12:30</strong> a poté opět od <strong>16:00</strong> dál. V době oběda je restaurace většinou plná a stůl rezervovat nelze. Děkujeme za pochopení.</p>
+                        <p>Pro rezervaci volejte na tel. <strong>+420 731 658 045</strong></p>
+                    </div>
+                    <div class="reservation-form-container">
+                        <form class="reservation-form">
+                            <label for="name">Jméno a příjmení</label>
+                            <input type="text" id="name" name="name" required>
+
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+
+                            <label for="phone">Telefonní číslo</label>
+                            <input type="tel" id="phone" name="phone" pattern="[0-9]{9}" placeholder="+420 731 658 045" required>
+
+                            <label for="date">Datum</label>
+                            <input type="date" id="date" name="date" required>
+
+                            <label for="time">Preferovaný čas</label>
+                            <select id="time" name="time" required>
+                                <option value="">Vyberte čas</option>
+                                <option value="11:00">11:00</option>
+                                <option value="11:30">11:30</option>
+                                <option value="12:00">12:00</option>
+                                <option value="16:00">16:00</option>
+                                <option value="16:30">16:30</option>
+                                <option value="17:00">17:00</option>
+                                <option value="17:30">17:30</option>
+                                <option value="18:00">18:00</option>
+                                <option value="18:30">18:30</option>
+                                <option value="19:00">19:00</option>
+                                <option value="19:30">19:30</option>
+                                <option value="20:00">20:00</option>
+                            </select>
+
+                            <label for="guests">Počet osob</label>
+                            <input type="number" id="guests" name="guests" min="1" max="20" value="2" required>
+
+                            <label for="notes">Poznámky (např. dieta, speciální příležitost)</label>
+                            <textarea id="notes" name="notes"></textarea>
+
+                            <button type="submit" class="cta-button interactive">Odeslat rezervaci</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="events">
+            <div class="container">
+                <h2 class="section-title">Svatby a oslavy</h2>
+                <div class="event-card-grid">
+                    <div class="event-card interactive">
+                        <div class="event-card-image">
+                            <img src="https://i.postimg.cc/jjn9730Q/wedding.jpg" alt="Svatební hostina v restauraci Ještěd">
+                        </div>
+                        <div class="event-card-content">
+                            <h3>Svatby</h3>
+                            <p>Vrchol hory Ještěd vždy lákal k velkým činům. Těší nás, pokud jste si jej vybrali jako místo vaší svatby. Aby váš velký den proběhl hladce a zároveň neomezoval jiné lidi, sepsali jsme body, které je nutné při plánování svatby na Ještědu mít na mysli.</p>
+                            <a href="#" class="cta-button">Zjistit více</a>
+                        </div>
+                    </div>
+                    <div class="event-card interactive">
+                        <div class="event-card-image">
+                            <img src="https://i.postimg.cc/Qx1D14vD/celebration.jpg" alt="Oslava narozenin s výhledem">
+                        </div>
+                        <div class="event-card-content">
+                            <h3>Oslavy</h3>
+                            <p>Ať už slavíte narozeniny, výročí nebo firemní večírek, naše restaurace nabízí jedinečné prostředí pro nezapomenutelné okamžiky. Kontaktujte nás a naplánujte si událost přesně podle vašich představ.</p>
+                            <a href="#" class="cta-button">Naplánovat oslavu</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="stay-overnight">
+            <div class="container">
+                <div class="stay-content">
+                    <div class="stay-image">
+                        <img src="https://i.postimg.cc/QtdsbMz1/htel-4.jpg" alt="Útulný hotelový pokoj s výhledem">
+                    </div>
+                    <div class="stay-text">
+                        <h2>A co takhle zůstat na noc?</h2>
+                        <p>Dobré jídlo nebo slavnostní večeře jsou fajn. Co ale rezervovat rovnou pokoj, abyste po večeři už nikam nemuseli?</p>
+                        <p>Hotelové pokoje jsou v sezóně - hlavně v létě - brzo vyprodané. Mimo hlavní sezónu, tedy od podzimu do jara většinou volný pokoj najdete. Navíc ceny mimo sezónu strmě padají dolů. Čekat na vás bude pohodlná postel a ráno skvělá snídaně nad oblaky...</p>
+                        <a href="#" class="cta-button interactive">Prohlédnout pokoje</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bento-grid">
+                <div class="bento-box logo"><h3>JEŠTĚD</h3><p>Ikona nad oblaky. Cíl pro dobrodruhy, snílky a znalce designu.</p></div>
+                <div class="bento-box nav"><h4>Navigace</h4><ul><li><a href="#" class="interactive">Pokoje</a></li><li><a href="#" class="interactive">Restaurace</a></li><li><a href="#" class="interactive">Pro Firmy</a></li><li><a href="#" class="interactive">Náš Příběh</a></li></ul></div>
+                <div class="bento-box contact"><h4>Kontakt</h4><ul><li><a href="tel:+420731658045" class="interactive">+420 731 658 045</a></li><li><a href="mailto:recepce@jested.cz" class="interactive">recepce@jested.cz</a></li></ul></div>
+                <div class="bento-box socials"><h4>Sociální Sítě</h4><div class="social-links"><a href="#" aria-label="Instagram" class="interactive"><i class="fa-brands fa-instagram"></i></a><a href="#" aria-label="Facebook" class="interactive"><i class="fa-brands fa-facebook-f"></i></a><a href="#" aria-label="X" class="interactive"><i class="fa-brands fa-twitter"></i></a></div></div>
+                <div class="bento-box newsletter-cta interactive"><h4>Zůstaňte v Obraze</h4><p>Získejte exkluzivní nabídky a novinky přímo do vaší schránky.</p><form class="newsletter-form"><input type="email" placeholder="Váš email" required><button type="submit" aria-label="Odeslat">→</button></form></div>
+            </div>
+        </div>
+    </footer>
+    
+    <div class="footer-signoff">
+        <div class="footer-signoff-text">JEŠTĚD</div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 Hotel Ještěd. Všechna práva vyhrazena.</p></div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // --- Header Scroll Effect ---
+            const header = document.querySelector('.site-header');
+            if (header) {
+                ScrollTrigger.create({
+                    start: 'top -80',
+                    end: 99999,
+                    toggleClass: {className: 'scrolled', targets: header}
+                });
+            }
+
+            // --- Mobile Navigation ---
+            const navToggle = document.querySelector('.mobile-nav-toggle');
+            const mainNav = document.querySelector('.main-nav');
+            if (navToggle && mainNav) {
+                navToggle.addEventListener('click', () => {
+                    mainNav.classList.toggle('is-active');
+                });
+            }
+
+            // --- Hero Text Animation ---
+            const heroTimeline = gsap.timeline({defaults: { ease: 'power3.out' }});
+            heroTimeline
+                .from('.hero .main-headline', { y: 50, opacity: 0, duration: 1.2 })
+                .from('.hero p', { y: 20, opacity: 0, duration: 1 }, "-=0.8")
+                .from('.hero .cta-button', { y: 20, opacity: 0, duration: 1 }, "-=0.6")
+                .from('.scroll-link', { opacity: 0, duration: 1 }, "-=0.5");
+
+
+            // --- Custom Cursor Logic ---
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                const cursor = document.querySelector('.custom-cursor');
+                if (cursor) {
+                    const interactiveElements = document.querySelectorAll('.interactive');
+                    const moveCursor = (e) => {
+                        gsap.to(cursor, { duration: 0.4, x: e.clientX, y: e.clientY, ease: 'power3.out' });
+                    };
+                    window.addEventListener('mousemove', moveCursor);
+                    interactiveElements.forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+                    });
+                }
+            }
+
+            // --- Generic Fade-in Animations for sections ---
+            const revealSections = document.querySelectorAll('#restaurant-info, #philosophy, #reservation, #events, #stay-overnight, .footer-signoff, .site-footer');
+            revealSections.forEach(el => {
+                 gsap.from(el, {
+                    opacity: 0,
+                    y: 60,
+                    duration: 1.2,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 85%',
+                        toggleActions: 'play none none none'
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

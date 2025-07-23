@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Ještěd - Ikonický Zážitek</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* --- Ještěd Black & White Design System (NEW) --- */
+        :root {
+            --font-display: 'Anton', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+            --color-light: #ffffff;
+            --color-muted: #797979;
+            --color-dark: #0F0F0F;
+            --color-darker: #050505;
+            --color-border: #222222;
+            --transition-duration: 0.5s;
+            --bezier-ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --color-border-light: #3a3a3a; /* Kept for compatibility with sections not updated */
+        }
+
+        /* --- Base & Reset --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body, html {
+            font-family: var(--font-body);
+            background-color: var(--color-dark);
+            color: var(--color-light);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Hide custom cursor on touch devices */
+        @media (hover: hover) and (pointer: fine) {
+            body, html {
+                cursor: none;
+            }
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+
+
+        /* --- Animations --- */
+        @keyframes fadeInPage {
+            to { opacity: 1; }
+        }
+
+        @keyframes revealUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes revealText {
+            to {
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* --- Custom Cursor (NEW) --- */
+        .custom-cursor {
+            position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+            background-color: var(--color-light); border-radius: 50%;
+            pointer-events: none; transform: translate(-50%, -50%);
+            z-index: 9999; transition: width 0.3s var(--bezier-ease), height 0.3s var(--bezier-ease), background-color 0.3s var(--bezier-ease);
+        }
+        .custom-cursor.grow {
+            width: 70px; height: 70px; background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- HERO SECTION (REVISED) --- */
+        #hero {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            text-align: center;
+            /* Static fallback background */
+            background-image: url('https://i.postimg.cc/rwRkQH7J/j-hero-1.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        #webgl-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+        
+        .main-headline {
+            font-family: var(--font-display);
+            font-weight: 400;
+            text-transform: uppercase;
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        .main-headline span {
+            display: block;
+            font-size: clamp(4.5rem, 15vw, 15rem);
+            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+            transform: translateY(30px);
+            opacity: 0;
+            animation: revealText 1.5s var(--bezier-ease) forwards;
+        }
+
+        .main-headline .line-1 {
+            animation-delay: 0.8s;
+        }
+        .main-headline .line-2 {
+            animation-delay: 1.0s;
+        }
+
+        .sub-headline {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 2rem;
+            margin-bottom: 2.5rem;
+            max-width: 40ch;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease-out 1.5s forwards;
+            pointer-events: all;
+        }
+
+        .hero-content .cta-button {
+            display: inline-block;
+            pointer-events: all;
+            padding: 1rem 2.5rem;
+            border: 2px solid var(--color-light);
+            color: var(--color-light);
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease-out 1.8s forwards;
+        }
+
+        .hero-content .cta-button:hover {
+            background-color: var(--color-light);
+            color: var(--color-dark);
+        }
+
+        /* --- ABOUT SECTION (FINAL POLISH) --- */
+        #about {
+            padding: 10rem 0;
+            background-color: var(--color-darker);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .about-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2rem 2.5rem;
+            align-items: center;
+        }
+        
+        /* --- Grid Area Definitions --- */
+        .about-left { grid-area: 1 / 1 / 4 / 5; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 0.7rem; padding-top: 0.5rem; }
+        .about-eyebrow { margin-bottom: 0.5rem; }
+        .about-headline { margin-top: 0; margin-bottom: 0.5rem; }
+        .about-video { grid-area: 1 / 5 / 4 / 9; }
+        .about-description { grid-area: 1 / 9 / 2 / 13; align-self: end; }
+        .about-button { grid-area: 2 / 9 / 3 / 11; align-self: start; }
+        .about-stats { grid-area: 3 / 9 / 4 / 13; align-self: end; }
+
+        /* --- Animated Elements --- */
+        .about-eyebrow, .about-headline, .about-description, .about-button, .about-stats {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0; /* Initially hidden */
+        }
+        
+        /* Staggered animation delays */
+        .about-headline { animation-delay: 0.2s; }
+        .about-description { animation-delay: 0.4s; }
+        .about-button { animation-delay: 0.6s; }
+        .about-stats { animation-delay: 0.8s; }
+
+        .about-eyebrow {
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-light);
+        }
+        
+        .about-headline {
+            font-family: var(--font-display);
+            font-size: 8vw;
+            line-height: 0.9;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            margin-top: -0.5rem;
+            align-self: start;
+        }
+        
+        .about-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            min-height: 600px;
+            animation: fadeInUp 0.8s ease-out forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
+        }
+        
+        .about-description {
+            font-size: 1.1rem; 
+            font-weight: 300;
+            line-height: 1.9; 
+            color: var(--color-muted);
+            margin-bottom: 2rem;
+        }
+        
+        .about-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--color-light);
+            background-color: transparent;
+            padding: 0.85rem 1.75rem;
+            border: 1px solid var(--color-border);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.4s ease;
+        }
+        
+        .about-button .arrow {
+            margin-left: 0.75rem;
+            transition: transform 0.4s ease;
+        }
+        
+        .about-button:hover {
+            background-color: var(--color-light);
+            color: var(--color-darker);
+            border-color: var(--color-light);
+        }
+        
+        .about-button:hover .arrow {
+            transform: translateX(6px);
+        }
+        
+        .about-stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .stat { text-align: center; }
+        
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            line-height: 1.1;
+            color: var(--color-light);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 400;
+            color: var(--color-muted);
+        }
+
+        /* --- RESTAURANTS (SPLIT SCREEN) SECTION --- */
+        #restaurants {
+            padding: 0;
+            text-align: center;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .split-view-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .split-panel {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            transition: flex 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .panel-hotel {
+            background-image: url('https://i.postimg.cc/8PRD45rm/hotel-1.jpg');
+        }
+
+        .panel-restaurant {
+            background-image: url('https://i.postimg.cc/fRMsrNcn/restaurace-1.jpg');
+        }
+
+        .split-view-container:hover .split-panel:hover {
+            flex: 1.2;
+        }
+
+        .split-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: background-color 0.5s ease;
+        }
+
+        .split-panel:hover::before {
+            background-color: rgba(0, 0, 0, 0.65);
+        }
+
+        .panel-content {
+            z-index: 2;
+            position: relative;
+            padding: 2rem;
+            transform: translateY(10px);
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .split-panel:hover .panel-content {
+            transform: translateY(0);
+        }
+        
+        .panel-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 8rem);
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            transition: color 0.5s ease;
+        }
+
+        .split-panel:hover .panel-title {
+            color: #fff;
+        }
+        .panel-content p {
+            color: var(--color-light);
+        }
+
+        .panel-cta {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 14px 40px;
+            border: 2px solid var(--color-light);
+            color: var(--color-light);
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .split-panel:hover .panel-cta {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.2s;
+        }
+        
+        .panel-cta:hover {
+            background-color: var(--color-light);
+            color: var(--color-dark);
+        }
+
+        /* --- FOR FIRMS SECTION --- */
+        #firms {
+            padding: 10rem 0;
+            background-color: var(--color-darker);
+            display: flex;
+            align-items: center;
+        }
+
+        .firms-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .firms-content {
+            padding-right: 2rem;
+        }
+        .firms-content .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid var(--color-border);
+            color: var(--color-light);
+            transition: all 0.4s var(--bezier-ease);
+            margin-top: 1rem;
+        }
+        .firms-content .cta-button:hover {
+             background-color: var(--color-light);
+             color: var(--color-darker);
+             border-color: var(--color-light);
+        }
+
+
+        .firms-headline {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 8vw, 4rem); /* Made responsive */
+            line-height: 1.1;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .firms-description {
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.9;
+            color: var(--color-muted);
+            margin-bottom: 2rem;
+        }
+
+        .firms-image img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        /* --- REVIEWS SECTION (NEW) --- */
+        #reviews {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10rem 2rem;
+            min-height: 100vh;
+            background-color: var(--color-dark);
+        }
+        .quote-wrapper {
+            width: 100%;
+            max-width: 1100px;
+        }
+        .text-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 auto;
+        }
+        .line {
+            position: relative;
+            font-family: var(--font-body);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 500;
+            line-height: 1.4;
+            color: var(--color-muted);
+            text-align: center;
+        }
+        .revealed-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: var(--color-light);
+            clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+        }
+        .attribution {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-muted);
+            margin-top: 3rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* --- HISTORY SECTION --- */
+        #history {
+            padding: 10rem 0;
+            background-color: var(--color-darker);
+            text-align: center;
+            overflow: hidden;
+        }
+        #history .section-title { color: var(--color-light); font-size: 3rem; margin-bottom: 1rem;}
+        #history .subtitle { color: var(--color-light); font-size: 1rem; margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 2px;}
+        .history-showcase {
+            margin-bottom: 3rem;
+            min-height: 100px;
+            padding: 0 1rem;
+        }
+        #history-date {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            color: var(--color-light);
+            margin-bottom: 0.5rem;
+        }
+        #history-event {
+            font-size: 1.1rem;
+            color: var(--color-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 50px;
+        }
+        .history-carousel-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            margin-bottom: 5rem;
+        }
+        .history-item {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 60%; height: 100%;
+            max-width: 800px;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.7);
+            transition: transform 1.2s cubic-bezier(0.86, 0, 0.07, 1), opacity 1s cubic-bezier(0.86, 0, 0.07, 1);
+        }
+        .history-item img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .history-item.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            z-index: 10;
+        }
+        .history-item.is-next {
+            transform: translate(120%, -50%) scale(0.7);
+            z-index: 5;
+        }
+        .history-item.is-prev {
+            transform: translate(-120%, -50%) scale(0.7);
+            z-index: 5;
+        }
+        .history-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 20;
+            background: transparent;
+            border: none;
+            color: var(--color-muted);
+            cursor: pointer;
+            padding: 1rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .history-nav-btn:hover {
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+        #history-prev-btn { left: 5%; }
+        #history-next-btn { right: 5%; }
+        .history-nav-btn svg { width: 40px; height: 40px; }
+        .history-timeline {
+            position: relative;
+            width: 80%;
+            margin: 0 auto;
+            height: 2px;
+            background-color: rgba(255,255,255,0.2);
+        }
+        .timeline-items-container {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+        }
+        .timeline-item {
+            position: relative;
+            cursor: pointer;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.5);
+            transition: all 0.4s ease;
+        }
+        .timeline-item:hover::before, .timeline-item.active::before {
+            background-color: var(--color-light);
+            transform: translateX(-50%) scale(1.5);
+        }
+        .timeline-item span {
+            display: block;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.5);
+            transition: color 0.4s ease;
+        }
+        .timeline-item:hover span, .timeline-item.active span { color: var(--color-light); }
+
+        /* --- CONTACT & FOOTER SECTION (NEW) --- */
+        #contact {
+            padding: 10rem 0;
+            background-color: var(--color-dark);
+        }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 4rem;
+            align-items: center;
+        }
+        .contact-info {
+            grid-column: 1 / 6;
+        }
+        .contact-info h2 {
+             font-family: var(--font-display); font-size: clamp(3rem, 8vw, 6rem);
+            text-transform: uppercase; line-height: 1;
+        }
+        .contact-info p.lead {
+            color: var(--color-muted); line-height: 1.8;
+            font-size: 1.1rem; max-width: 45ch; margin: 2rem 0 3rem 0;
+        }
+        .contact-details { list-style: none; }
+        .contact-details li { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; }
+        .contact-details i { font-size: 1.5rem; color: var(--color-muted); width: 25px; }
+        .contact-details .contact-link {
+            color: var(--color-light); text-decoration: none; font-size: 1.25rem; font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .contact-details .contact-link:hover { color: var(--color-muted); }
+
+        .contact-map {
+            grid-column: 6 / -1; height: 75vh;
+            border-radius: 12px; overflow: hidden;
+            border: 1px solid var(--color-border);
+        }
+        .contact-map iframe {
+            width: 100%; height: 100%; border: 0;
+            filter: invert(100%) grayscale(80%) contrast(1.1);
+        }
+
+        .site-footer {
+            padding-top: 8rem;
+            background-color: var(--color-darker);
+            border-top: 1px solid var(--color-border);
+        }
+        .footer-bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        .bento-box {
+            background-color: var(--color-dark);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .bento-box:hover { background-color: #1a1a1a; border-color: #333; }
+        
+        .bento-box.logo { grid-column: 1 / 3; }
+        .bento-box.nav { grid-column: 3 / 5; }
+        .bento-box.contact { grid-column: 1 / 2; }
+        .bento-box.socials { grid-column: 2 / 3; }
+        .bento-box.newsletter-cta { grid-column: 3 / 5; }
+
+        .bento-box h3 { font-family: var(--font-display); font-size: 3rem; text-transform: uppercase; }
+        .bento-box p { color: var(--color-muted); max-width: 40ch; margin-top: 1rem; }
+        .bento-box h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-muted); margin-bottom: 1.5rem; }
+        .bento-box ul { list-style: none; }
+        .bento-box a { color: var(--color-light); text-decoration: none; line-height: 2.2; font-weight: 500; }
+        .bento-box a:hover { text-decoration: underline; }
+        .bento-box .social-links { display: flex; gap: 1.5rem; }
+        .bento-box .social-links a { font-size: 1.5rem; }
+
+        .bento-box.newsletter-cta { background: var(--color-light); color: var(--color-darker); }
+        .bento-box.newsletter-cta h4 { color: #555; }
+        .bento-box.newsletter-cta p { color: #333; margin-bottom: 1.5rem; }
+        .newsletter-form { display: flex; }
+        .newsletter-form input {
+            flex-grow: 1; border: 1px solid #ccc; background: #fff;
+            padding: 0.8rem 1rem; color: #000; font-size: 1rem;
+            border-radius: 6px 0 0 6px;
+        }
+        .newsletter-form button {
+            background: var(--color-darker); color: var(--color-light); border: none;
+            padding: 0.8rem 1.5rem; font-weight: 500; cursor: pointer;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .footer-signoff {
+            margin-top: 10rem;
+            padding-bottom: 4rem; 
+            text-align: center;
+        }
+        .footer-signoff-text {
+            font-family: var(--font-display);
+            font-size: clamp(10rem, 22vw, 25rem);
+            line-height: 0.8;
+            text-transform: uppercase;
+            color: var(--color-border);
+        }
+
+        .footer-bottom {
+            text-align: center; padding: 3rem 0;
+            border-top: 1px solid var(--color-border); color: var(--color-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 1200px) {
+            .panel-title {
+                font-size: clamp(2.5rem, 6vw, 6rem);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .contact-grid { grid-template-columns: 1fr; }
+            .contact-info { grid-column: 1 / -1; text-align: center; }
+            .contact-map { grid-column: 1 / -1; margin-top: 4rem; height: 50vh; }
+            
+            /* Footer Bento Grid Correction for tablets */
+            .footer-bento-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .bento-box.logo,
+            .bento-box.nav,
+            .bento-box.newsletter-cta {
+                grid-column: 1 / -1; /* Span full width */
+            }
+            .bento-box.contact {
+                grid-column: 1 / 2;
+            }
+            .bento-box.socials {
+                grid-column: 2 / 3;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .about-left, .about-video,
+            .about-description, .about-button, .about-stats {
+                grid-area: auto;
+                align-self: auto;
+            }
+            .about-headline {
+                font-size: clamp(4rem, 18vw, 10rem); /* Made responsive */
+                line-height: 1;
+                margin-bottom: 2rem;
+            }
+            .about-video { order: -1; min-height: 450px; }
+            .about-description { margin-bottom: 0; }
+            .about-stats {
+                flex-direction: row; 
+                gap: 1rem;
+                padding-top: 2rem;
+                border-top: 1px solid var(--color-border);
+            }
+            #restaurants { padding: 0; height: 100vh; }
+            .split-view-container { flex-direction: column; }
+            .split-panel:hover .panel-cta { opacity: 1; transform: translateY(0); }
+            #history { padding: 6rem 0; }
+            .history-carousel-container { height: 400px; }
+            .history-item { width: 80%; }
+            #history-prev-btn { left: 2%; }
+            #history-next-btn { right: 2%; }
+            .history-timeline { width: 90%; }
+            .firms-container { grid-template-columns: 1fr; }
+            .firms-image { order: -1; }
+        }
+
+        @media (max-width: 768px) {
+            .main-headline span {
+                font-size: clamp(4.5rem, 20vw, 15rem);
+            }
+            .sub-headline {
+                margin-top: 1.5rem;
+                margin-bottom: 2rem;
+            }
+            .section-header .section-title { font-size: 3.5rem; }
+            .panel-cta { opacity: 1; transform: translateY(0); }
+            #about { padding: 6rem 0; }
+            .about-container { padding: 1.5rem; }
+            .about-stats {
+                flex-direction: column;
+                gap: 2.5rem;
+                border-top: none;
+            }
+            .stat {
+                padding-bottom: 2rem;
+                border-bottom: 1px solid var(--color-border);
+            }
+            .stat:last-child { border-bottom: none; padding-bottom: 0; }
+        }
+
+        @media (max-width: 600px) {
+            /* Full single-column layout for footer on small devices */
+             .footer-bento-grid {
+                 grid-template-columns: 1fr;
+             }
+             .bento-box.logo, .bento-box.newsletter-cta, .bento-box.nav, .bento-box.contact, .bento-box.socials {
+                 grid-column: 1 / -1;
+             }
+        }
+
+        @media (max-width: 576px) {
+            #hero { background-attachment: scroll; }
+            .panel-title {
+                font-size: clamp(2rem, 10vw, 3rem);
+            }
+            #history-date { font-size: 2.5rem; }
+            .history-carousel-container { height: 300px; }
+            .history-item { width: 90%; }
+            .history-timeline span { font-size: 0.8rem; writing-mode: vertical-rl; text-orientation: mixed; margin-top: 15px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="custom-cursor"></div>
+
+    <section id="hero">
+        <div class="hero-content">
+            <h1 class="main-headline">
+                <span class="line-2">Ještěd</span>
+            </h1>
+            <p class="sub-headline">Zažijte symbol české architektury.</p>
+            <a href="#about" class="cta-button interactive">Objevit Hotel</a>
+        </div>
+        <canvas id="webgl-canvas"></canvas>
+    </section>
+
+    <section id="about">
+        <div class="about-container">
+            <div class="about-left">
+                <div class="about-eyebrow">
+                    <span>NÁŠ ODKAZ</span>
+                </div>
+                <h2 class="about-headline">
+                    JEŠTĚD<br>
+                    HOTEL
+                </h2>
+            </div>
+            <video playsinline autoplay muted loop class="about-video" poster="https://i.postimg.cc/ZRm3wzCk/2.jpg">
+                <source src="https://github.com/TomasZitko/jested/raw/main/Jested-Video-Final%20.mp4" type="video/mp4">
+            </video>
+            <div class="about-description">
+                <p>
+                    Hotel Ještěd, mistrovské dílo architektonické odvahy, nestojí jen na hoře, ale je památníkem vizionářského designu. Ctíme zde slavnou minulost a zároveň vytváříme útočiště jedinečného moderního luxusu.
+                </p>
+            </div>
+            <a href="#history" class="about-button interactive">
+                <span>PROZKOUMAT PŘÍBĚH</span>
+                <span class="arrow">→</span>
+            </a>
+            <div class="about-stats">
+                <div class="stat">
+                    <div class="stat-number">1012</div>
+                    <div class="stat-label">METRŮ VYSOKO</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">1973</div>
+                    <div class="stat-label">ROK VÝSTAVBY</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">1st</div>
+                    <div class="stat-label">CENA PERRETA</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="restaurants">
+        <div class="split-view-container">
+            <div class="split-panel panel-hotel">
+                <div class="panel-content">
+                    <h3 class="panel-title">Ubytování</h3>
+                    <p>Unikátní pokoje s výhledem</p>
+                    <a href="#" class="panel-cta interactive">OBJEVIT VÍCE</a>
+                </div>
+            </div>
+            <div class="split-panel panel-restaurant">
+                <div class="panel-content">
+                    <h3 class="panel-title">Restaurace</h3>
+                    <p>Česká & mezinárodní kuchyně</p>
+                    <a href="#" class="panel-cta interactive">ZOBRAZIT MENU</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="firms">
+        <div class="firms-container">
+            <div class="firms-content">
+                <h2 class="firms-headline">Firemní Akce & Setkání</h2>
+                <p class="firms-description">
+                    Pozvedněte vaši příští firemní akci nebo setkání v hotelu Ještěd. Naše jedinečné prostředí a nejmodernější zázemí poskytují inspirativní kulisu pro produktivní schůzky, teambuildingové aktivity a nezapomenutelné zážitky.
+                </p>
+                <a href="#contact" class="cta-button interactive">POPTAT NYNÍ</a>
+            </div>
+            <div class="firms-image">
+                <img src="https://i.postimg.cc/ZRm3wzCk/2.jpg" alt="Firemní akce v hotelu Ještěd">
+            </div>
+        </div>
+    </section>
+
+    <section id="reviews">
+        <div class="quote-wrapper">
+            <div class="text-container">
+                <div class="line">
+                    <span>"Architektonický skvost s</span>
+                    <span class="revealed-text">"Architektonický skvost s</span>
+                </div>
+                <div class="line">
+                    <span>dechberoucími výhledy. Pobyt v</span>
+                    <span class="revealed-text">dechberoucími výhledy. Pobyt v</span>
+                </div>
+                <div class="line">
+                    <span>hotelu Ještěd je zážitek, který</span>
+                    <span class="revealed-text">hotelu Ještěd je zážitek, který</span>
+                </div>
+                <div class="line">
+                    <span>s vámi zůstane navždy.</span>
+                    <span class="revealed-text">s vámi zůstane navždy.</span>
+                </div>
+                <div class="line">
+                    <span>Služby jsou bezchybné</span>
+                    <span class="revealed-text">Služby jsou bezchybné</span>
+                </div>
+                <div class="line">
+                    <span>a jídlo vynikající. Skutečně</span>
+                    <span class="revealed-text">a jídlo vynikající. Skutečně</span>
+                </div>
+                <div class="line">
+                    <span>nezapomenutelný pobyt."</span>
+                    <span class="revealed-text">nezapomenutelný pobyt."</span>
+                </div>
+            </div>
+            <p class="attribution">- VÁŽENÝ HOST</p>
+        </div>
+    </section>
+
+    <section id="history">
+        <div class="section-header">
+            <p class="subtitle">Odkaz vytesaný do kamene</p>
+            <h2 class="section-title">Naše historie</h2>
+        </div>
+        <div class="history-showcase">
+            <h2 id="history-date"></h2>
+            <p id="history-event"></p>
+        </div>
+        <div class="history-carousel-container">
+            <div class="history-carousel">
+            </div>
+            <button id="history-prev-btn" class="history-nav-btn interactive">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+            </button>
+            <button id="history-next-btn" class="history-nav-btn interactive">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+            </button>
+        </div>
+        <div class="history-timeline">
+            <div class="timeline-items-container">
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h2>Kontakt</h2>
+                    <p class="lead">Jsme zde, abychom zodpověděli vaše dotazy, naplánovali vaši akci nebo vám pomohli s rezervací pobytu. Spojte se s námi a zažijte vrcholnou péči.</p>
+                    <ul class="contact-details">
+                        <li>
+                            <i class="fa-solid fa-phone"></i>
+                            <a href="tel:+420731658045" class="contact-link interactive">+420 731 658 045</a>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-envelope"></i>
+                            <a href="mailto:recepce@jested.cz" class="contact-link interactive">recepce@jested.cz</a>
+                        </li>
+                         <li>
+                            <i class="fa-solid fa-location-dot"></i>
+                            <a href="#" class="contact-link interactive">Horní Hanychov 153, 460 08 Liberec</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="contact-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1v1720645656338!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4709361cf2372333%3A0x8c6175e44f08514a!2sHorsk%C3%BD%20hotel%20Je%C5%A1t%C4%9Bd!5e0!3m2!1scs!2scz!4v1720645656338!5m2!1scs!2scz" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bento-grid">
+                <div class="bento-box logo">
+                    <h3>JEŠTĚD</h3>
+                    <p>Ikona nad oblaky. Cíl pro dobrodruhy, snílky a znalce designu.</p>
+                </div>
+                <div class="bento-box nav">
+                    <h4>Navigace</h4>
+                    <ul>
+                        <li><a href="#" class="interactive">Pokoje</a></li>
+                        <li><a href="#" class="interactive">Restaurace</a></li>
+                        <li><a href="#" class="interactive">Pro Firmy</a></li>
+                        <li><a href="#" class="interactive">Náš Příběh</a></li>
+                    </ul>
+                </div>
+                <div class="bento-box contact">
+                    <h4>Kontakt</h4>
+                     <ul>
+                        <li><a href="tel:+420731658045" class="interactive">+420 731 658 045</a></li>
+                        <li><a href="mailto:recepce@jested.cz" class="interactive">recepce@jested.cz</a></li>
+                    </ul>
+                </div>
+                 <div class="bento-box socials">
+                    <h4>Sociální Sítě</h4>
+                     <div class="social-links">
+                        <a href="#" aria-label="Instagram" class="interactive"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook" class="interactive"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" aria-label="X" class="interactive"><i class="fa-brands fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="bento-box newsletter-cta interactive">
+                    <h4>Zůstaňte v Obraze</h4>
+                    <p>Získejte exkluzivní nabídky a novinky přímo do vaší schránky.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Váš email" required>
+                        <button type="submit" aria-label="Odeslat">→</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-signoff">
+            <div class="footer-signoff-text">JEŠTĚD</div>
+        </div>
+
+        <div class="container">
+             <div class="footer-bottom">
+                <p>© 2025 Hotel Ještěd. Všechna práva vyhrazena.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+        // WebGL Hero Background
+        document.addEventListener('DOMContentLoaded', () => {
+            const webglCanvas = document.getElementById('webgl-canvas');
+            if (!webglCanvas) return;
+            
+            const scene = new THREE.Scene();
+            const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+            const renderer = new THREE.WebGLRenderer({ 
+                canvas: webglCanvas,
+                alpha: true 
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            const clock = new THREE.Clock();
+            const mouse = new THREE.Vector2();
+            const smoothedMouse = new THREE.Vector2();
+
+            window.addEventListener('mousemove', (event) => {
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.setCrossOrigin(''); 
+            
+            const texture = textureLoader.load(
+                'https://i.postimg.cc/rwRkQH7J/j-hero-1.jpg',
+                (loadedTexture) => {
+                    material.uniforms.uImageResolution.value.set(loadedTexture.image.width, loadedTexture.image.height);
+                    animate();
+                },
+                undefined, 
+                () => { 
+                    console.error('An error occurred loading the texture. The static background will be shown.');
+                }
+            );
+
+            const vertexShader = `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `;
+
+            const fragmentShader = `
+                uniform float uTime;
+                uniform vec2 uMouse;
+                uniform vec2 uResolution;
+                uniform vec2 uImageResolution;
+                uniform sampler2D uTexture;
+                
+                varying vec2 vUv;
+
+                vec2 cover(vec2 uv, vec2 imageRes, vec2 screenRes) {
+                    vec2 s = screenRes;
+                    vec2 i = imageRes;
+                    float rs = s.x / s.y;
+                    float ri = i.x / i.y;
+                    vec2 new = (rs < ri) ? vec2(i.x * s.y / i.y, s.y) : vec2(s.x, i.y * s.x / i.x);
+                    vec2 offset = (rs < ri) ? vec2((new.x - s.x) / 2.0, 0.0) : vec2(0.0, (new.y - s.y) / 2.0);
+                    offset /= new;
+                    uv = uv * s / new + offset;
+                    return uv;
+                }
+                
+                void main() {
+                    vec2 uv = cover(vUv, uImageResolution, uResolution);
+                    vec2 mouseUv = vec2(uMouse.x * 0.5 + 0.5, uMouse.y * 0.5 + 0.5);
+                    vec2 warpedMouseUv = cover(mouseUv, uImageResolution, uResolution);
+                    float dist = distance(uv, warpedMouseUv);
+                    
+                    float ripple = sin(dist * 30.0 - uTime * 6.0) * 0.05 * smoothstep(0.3, 0.0, dist);
+                    
+                    vec2 distortedUv = uv + ripple;
+                    vec4 color = texture2D(uTexture, distortedUv);
+                    gl_FragColor = color;
+                }
+            `;
+
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    uTime: { value: 0.0 },
+                    uMouse: { value: new THREE.Vector2(0, 0) },
+                    uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                    uImageResolution: { value: new THREE.Vector2(1, 1) },
+                    uTexture: { value: texture },
+                },
+                vertexShader,
+                fragmentShader,
+            });
+
+            const geometry = new THREE.PlaneGeometry(2, 2);
+            const plane = new THREE.Mesh(geometry, material);
+            scene.add(plane);
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                material.uniforms.uTime.value = clock.getElapsedTime();
+                
+                smoothedMouse.x += (mouse.x - smoothedMouse.x) * 0.08;
+                smoothedMouse.y += (mouse.y - smoothedMouse.y) * 0.08;
+                material.uniforms.uMouse.value = smoothedMouse;
+
+                renderer.render(scene, camera);
+            };
+
+            window.addEventListener('resize', () => {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                material.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+                camera.updateProjectionMatrix();
+            });
+        });
+
+        // GSAP functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // --- History Slider Logic ---
+            const historySection = document.getElementById('history');
+            if (historySection) {
+                const historyData = [
+                    { year: '1907', event: 'Nová horská chata<br>Na vrcholu Ještědu byla otevřena nová kamenná chata s vyhlídkovou věží.', image: 'https://i.postimg.cc/W4mnMM6n/history-2.jpg' },
+                    { year: '1963', event: 'Požár chaty<br>Při rozmrazování potrubí chata kompletně vyhořela.', image: 'https://i.postimg.cc/JhCxDTJ0/history-1.jpg' },
+                    { year: '1963', event: 'Plány na novou stavbu<br>Po požáru byla vyhlášena soutěž na novou podobu Ještědu, vyhrál návrh Karla Hubáčka.', image: 'https://i.postimg.cc/j5YgM074/project.jpg' },
+                    { year: '1966', event: 'Začátek stavby<br>Byl položen základní kámen nové věže kombinující hotel a vysílač.', image: 'https://i.postimg.cc/Hky3LGrF/history-3.jpg' },
+                    { year: '1969', event: 'Mezinárodní ocenění<br>Architekt Hubáček získal za projekt Ještědu Cenu Augusta Perreta.', image: 'https://i.postimg.cc/bw29WV8C/prize.jpg' },
+                    { year: '1973', event: 'Dokončení stavby<br>Nová věž byla dokončena a otevřena veřejnosti.', image: 'https://i.postimg.cc/pdSVdfMs/images.jpg' }
+                ];
+
+                const nextButton = document.getElementById('history-next-btn');
+                const prevButton = document.getElementById('history-prev-btn');
+                const carousel = document.querySelector('.history-carousel');
+                const timeline = document.querySelector('.timeline-items-container');
+                const dateHeadline = document.getElementById('history-date');
+                const eventHeadline = document.getElementById('history-event');
+                
+                let currentIndex = 0;
+                let isAnimating = false;
+
+                historyData.forEach((item, index) => {
+                    const carItem = document.createElement('div');
+                    carItem.classList.add('history-item');
+                    carItem.innerHTML = `<img src="${item.image}" alt="${item.event.replace('<br>',' ')}">`;
+                    carousel.appendChild(carItem);
+
+                    const timeItem = document.createElement('div');
+                    timeItem.classList.add('timeline-item');
+                    timeItem.dataset.index = index;
+                    timeItem.innerHTML = `<span>${item.year}</span>`;
+                    timeline.appendChild(timeItem);
+                });
+
+                const historyItems = document.querySelectorAll('.history-item');
+                const timelineItems = document.querySelectorAll('.timeline-item');
+                const totalItems = historyItems.length;
+
+                function setClasses() {
+                    historyItems.forEach((item, index) => {
+                        item.classList.remove('active', 'is-prev', 'is-next');
+                        if (index === currentIndex) item.classList.add('active');
+                        else if (index === (currentIndex + 1) % totalItems) item.classList.add('is-next');
+                        else if (index === (currentIndex - 1 + totalItems) % totalItems) item.classList.add('is-prev');
+                    });
+                    timelineItems.forEach((item, index) => {
+                        item.classList.remove('active');
+                        if(index === currentIndex) item.classList.add('active');
+                    });
+                }
+
+                function updateShowcaseText(index) {
+                    dateHeadline.innerHTML = historyData[index].year;
+                    eventHeadline.innerHTML = historyData[index].event;
+                }
+                
+                function moveTo(index) {
+                    if (isAnimating) return;
+                    isAnimating = true;
+                    currentIndex = index;
+                    setClasses();
+                    updateShowcaseText(currentIndex);
+                    setTimeout(() => { isAnimating = false; }, 1200);
+                }
+
+                nextButton.addEventListener('click', () => moveTo((currentIndex + 1) % totalItems));
+                prevButton.addEventListener('click', () => moveTo((currentIndex - 1 + totalItems) % totalItems));
+                
+                timelineItems.forEach(item => {
+                    item.addEventListener('click', () => {
+                        const index = parseInt(item.dataset.index, 10);
+                        moveTo(index);
+                    })
+                });
+
+                setClasses();
+                updateShowcaseText(currentIndex);
+            }
+
+            // --- NEW REVIEWS SECTION ---
+            const lines = gsap.utils.toArray('.line');
+            lines.forEach(line => {
+                const revealedText = line.querySelector('.revealed-text');
+                gsap.to(revealedText, {
+                    clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+                    ease: "power1.inOut",
+                    scrollTrigger: {
+                        trigger: line,
+                        start: "top 85%",
+                        end: "bottom 70%",
+                        scrub: 0.8,
+                    }
+                });
+            });
+
+            const attribution = document.querySelector('.attribution');
+            if(attribution) {
+                gsap.from(attribution, {
+                    opacity: 0,
+                    y: 20,
+                    ease: "power1.inOut",
+                    scrollTrigger: {
+                        trigger: '.text-container',
+                        start: "bottom 85%",
+                        toggleActions: "play none none none",
+                        once: true,
+                    }
+                });
+            }
+            
+            // --- NEW CURSOR & FADE-IN LOGIC ---
+            const cursor = document.querySelector('.custom-cursor');
+            const interactiveElements = document.querySelectorAll('.interactive');
+            const moveCursor = (e) => {
+                gsap.to(cursor, { duration: 0.4, x: e.clientX, y: e.clientY, ease: 'power3.out' });
+            };
+            window.addEventListener('mousemove', moveCursor);
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+            });
+
+            const revealElements = document.querySelectorAll('.contact-grid, .bento-box, .footer-signoff');
+            revealElements.forEach(el => {
+                gsap.from(el, {
+                    opacity: 0,
+                    y: 50,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 90%',
+                        toggleActions: 'play none none none'
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

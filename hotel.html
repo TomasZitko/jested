@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Ještěd - Pokoje & Apartmány</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* --- Ještěd Black & White Design System --- */
+        :root {
+            --font-display: 'Anton', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+            --color-light: #ffffff;
+            --color-muted: #999999;
+            --color-dark: #0F0F0F;
+            --color-darker: #050505;
+            --color-border: #222222;
+            --transition-duration: 0.5s;
+            --bezier-ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* --- Base & Global Styles --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-darker);
+            color: var(--color-light);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+         @media (hover: hover) and (pointer: fine) {
+            body {
+                cursor: none;
+            }
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+        
+        /* --- Custom Cursor --- */
+        .custom-cursor {
+            position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+            background-color: var(--color-light); border-radius: 50%;
+            pointer-events: none; transform: translate(-50%, -50%);
+            z-index: 10001; transition: width 0.3s var(--bezier-ease), height 0.3s var(--bezier-ease), background-color 0.3s var(--bezier-ease);
+        }
+        .custom-cursor.grow {
+            width: 70px; height: 70px; background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Site Header --- */
+        .site-header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.4s ease, padding 0.4s ease;
+        }
+        .site-header.scrolled {
+            background-color: rgba(15, 15, 15, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .header-logo a {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            text-decoration: none;
+            color: var(--color-light);
+            letter-spacing: 1px;
+        }
+        .main-nav { display: flex; gap: 2.5rem; }
+        .main-nav a {
+            color: var(--color-light); text-decoration: none;
+            text-transform: uppercase; font-size: 0.9rem;
+            font-weight: 500; position: relative;
+            padding: 0.5rem 0;
+        }
+        .main-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background-color: var(--color-light);
+            transition: width 0.4s var(--bezier-ease);
+        }
+        .main-nav a:hover::after { width: 100%; }
+        .mobile-nav-toggle { display: none; }
+
+
+        /* --- Reusable Components --- */
+        .section { padding: 10rem 0; }
+        .grid-layout { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; }
+        .cta-button {
+            display: inline-block; padding: 1rem 2.5rem; text-decoration: none;
+            font-weight: 500; border: 1px solid var(--color-border);
+            color: var(--color-light); transition: all 0.4s var(--bezier-ease);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        .cta-button:hover { background-color: var(--color-light); color: var(--color-darker); border-color: var(--color-light); }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 10vw, 9rem);
+            text-transform: uppercase; line-height: 0.9;
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+        
+        /* --- Hero Section (REVISED) --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://i.postimg.cc/65vKzgMj/hotel-1.jpg') no-repeat center center/cover;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-content { z-index: 2; padding: 1rem; }
+        .hero .main-headline {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            line-height: 1;
+            color: var(--color-light);
+        }
+        .hero .main-headline span {
+            display: block;
+            font-size: clamp(4rem, 12vw, 10rem);
+            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        .hero p {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 1rem;
+            font-weight: 300;
+            max-width: 45ch;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .hero-scroll-arrow {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        .scroll-link {
+            color: var(--color-light);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+        }
+        .scroll-link span {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+        .scroll-link i { font-size: 1.5rem; animation: bounce 2s infinite; }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(10px); }
+            60% { transform: translateY(5px); }
+        }
+
+        /* --- Rooms Gallery Section (FIXED) --- */
+        #rooms-gallery-wrapper { overflow: hidden; position: relative; background-color: var(--color-dark); }
+        #rooms-gallery {
+            display: flex;
+            width: 600%;
+        }
+        .room-panel {
+            width: 100vw;
+            height: 100vh;
+            display: grid; grid-template-columns: repeat(12, 1fr);
+            align-items: center; /* Vertical centering */
+        }
+        .room-image-wrapper { grid-column: 1 / 8; height: 100%; }
+        .room-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .room-content { 
+            grid-column: 8 / -1; 
+            padding: 4rem; /* More padding */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .room-content .room-number {
+            font-family: var(--font-display); font-size: 1.5rem;
+            color: var(--color-muted); margin-bottom: 1rem;
+        }
+        .room-content h2 {
+            font-family: var(--font-display); text-transform: uppercase;
+            font-size: clamp(3rem, 4vw, 4.5rem); line-height: 1;
+        }
+        .room-content .description {
+            color: var(--color-muted); line-height: 1.7;
+            margin: 2rem 0;
+            max-width: 45ch;
+        }
+        .room-details {
+            display: flex; gap: 2rem; list-style: none;
+            padding-bottom: 2rem; margin-bottom: 2rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .room-details li { display: flex; align-items: center; gap: 0.75rem; font-weight: 500; }
+        .room-details i { font-size: 1.1rem; width: 25px; color: var(--color-muted); text-align: center;}
+        .room-pricing { display: flex; justify-content: space-between; align-items: center; }
+        .room-pricing .price { font-size: 0.9rem; color: var(--color-muted); }
+        .room-pricing .price span {
+            font-family: var(--font-display); font-size: 2rem;
+            font-weight: 400; color: var(--color-light);
+            display: block;
+        }
+        
+        /* --- Skip Gallery Buttons (REVISED) --- */
+        .gallery-nav-arrows {
+            position: fixed;
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .gallery-nav-arrow {
+            color: var(--color-muted);
+            background-color: rgba(15,15,15,0.5);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+        .gallery-nav-arrow:hover {
+            color: var(--color-light);
+            background-color: rgba(34,34,34,0.7);
+        }
+
+        /* --- Rooms Overview Section --- */
+        #rooms-overview { background-color: var(--color-darker); }
+        .rooms-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        .room-card {
+            background-color: var(--color-dark);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s var(--bezier-ease), box-shadow 0.4s var(--bezier-ease);
+        }
+        .room-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .room-card-image { height: 250px; }
+        .room-card-image img { width: 100%; height: 100%; object-fit: cover; }
+        .room-card-content {
+            padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .room-card-content h3 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+        .room-card-content p {
+            color: var(--color-muted);
+            margin: 1rem 0 2rem 0;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+        .room-card-content .cta-button { align-self: flex-start; }
+
+
+        /* --- Reviews Section --- */
+        #reviews {
+            background-color: var(--color-darker);
+            border-top: 1px solid var(--color-border);
+            padding: 10rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .reviews-container { max-width: 900px; margin: 0 auto; position: relative; }
+        .review-slide {
+            position: absolute; top: 0; left: 0;
+            width: 100%; opacity: 0;
+            visibility: hidden; transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .review-slide.active { position: relative; opacity: 1; visibility: visible; }
+        .review-quote-mark {
+            font-family: var(--font-display); font-size: 10rem;
+            line-height: 1; color: var(--color-dark);
+            position: absolute; top: -2rem; left: 50%;
+            transform: translateX(-50%); z-index: 1; user-select: none;
+        }
+        .review-text {
+            font-size: clamp(1.25rem, 3vw, 2rem); font-weight: 400;
+            line-height: 1.6; color: var(--color-light);
+            position: relative; z-index: 2; margin-bottom: 2.5rem;
+        }
+        .review-author {
+            font-size: 1rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 2px; color: var(--color-muted);
+        }
+        .review-nav {
+            position: absolute; top: 50%; width: 100%;
+            display: flex; justify-content: space-between;
+            transform: translateY(-50%); left: -5%; width: 110%;
+        }
+        .review-nav-btn {
+            background: transparent; border: none; color: var(--color-muted);
+            font-size: 2rem; cursor: pointer; padding: 1rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .review-nav-btn:hover { color: var(--color-light); transform: scale(1.2); }
+
+        /* --- Information Section --- */
+        .information { background-color: var(--color-darker); border-top: 1px solid var(--color-border);}
+        .info-grid {
+             grid-column: 1 / -1; display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem;
+        }
+        .info-item { border-top: 1px solid var(--color-border); padding-top: 2rem; }
+        .info-item h3 { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; margin-bottom: 1.5rem; }
+        .info-item ul { list-style: none; padding-left: 0; }
+        .info-item li { color: var(--color-muted); margin-bottom: 0.8rem; line-height: 1.6; }
+        .info-item li strong { color: var(--color-light); }
+
+        /* --- Site Footer --- */
+        .footer-signoff {
+            padding: 8rem 0; 
+            text-align: center;
+            background-color: var(--color-dark);
+        }
+        .footer-signoff-text {
+            font-family: var(--font-display);
+            font-size: clamp(10rem, 22vw, 25rem);
+            line-height: 0.8;
+            text-transform: uppercase;
+            color: var(--color-border);
+        }
+        .site-footer {
+            padding: 8rem 0 0 0;
+            background-color: var(--color-dark);
+            border-top: 1px solid var(--color-border);
+        }
+        .footer-bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        .bento-box {
+            background-color: var(--color-darker);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .bento-box:hover { background-color: #1a1a1a; border-color: #333; }
+        .bento-box.logo { grid-column: 1 / 3; }
+        .bento-box.nav { grid-column: 3 / 5; }
+        .bento-box.contact { grid-column: 1 / 2; }
+        .bento-box.socials { grid-column: 2 / 3; }
+        .bento-box.newsletter-cta { grid-column: 3 / 5; }
+        .bento-box h3 { font-family: var(--font-display); font-size: 3rem; text-transform: uppercase; }
+        .bento-box p { color: var(--color-muted); max-width: 40ch; margin-top: 1rem; }
+        .bento-box h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-muted); margin-bottom: 1.5rem; }
+        .bento-box ul { list-style: none; }
+        .bento-box a { color: var(--color-light); text-decoration: none; line-height: 2.2; font-weight: 500; }
+        .bento-box a:hover { text-decoration: underline; }
+        .bento-box .social-links { display: flex; gap: 1.5rem; }
+        .bento-box .social-links a { font-size: 1.5rem; }
+        .bento-box.newsletter-cta { background: var(--color-light); color: var(--color-darker); }
+        .bento-box.newsletter-cta h4 { color: #555; }
+        .bento-box.newsletter-cta p { color: #333; margin-bottom: 1.5rem; }
+        .newsletter-form { display: flex; }
+        .newsletter-form input {
+            flex-grow: 1; border: 1px solid #ccc; background: #fff;
+            padding: 0.8rem 1rem; color: #000; font-size: 1rem;
+            border-radius: 6px 0 0 6px;
+        }
+        .newsletter-form button {
+            background: var(--color-darker); color: var(--color-light); border: none;
+            padding: 0.8rem 1.5rem; font-weight: 500; cursor: pointer;
+            border-radius: 0 6px 6px 0;
+        }
+        .footer-bottom {
+            text-align: center; padding: 2rem 0 2rem 0;
+            border-top: 1px solid var(--color-border); color: var(--color-muted);
+            font-size: 0.9rem;
+            background: var(--color-dark);
+            margin-top: 0;
+            width: 100vw;
+            left: 50%;
+            right: 50%;
+            position: relative;
+            transform: translateX(-50%);
+            box-sizing: border-box;
+        }
+        
+        /* --- Responsive Design --- */
+        @media (max-width: 1024px) {
+            #rooms-gallery-wrapper, .gallery-nav-arrows { display: none; } 
+            
+            .footer-bento-grid { grid-template-columns: 1fr 1fr; }
+            .bento-box.logo, .bento-box.nav, .bento-box.newsletter-cta { grid-column: 1 / -1; }
+            .bento-box.contact { grid-column: 1 / 2; }
+            .bento-box.socials { grid-column: 2 / 3; }
+        }
+
+        @media (max-width: 768px) {
+            .section { padding: 6rem 0; }
+            .main-nav {
+                position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+                background-color: var(--color-darker);
+                flex-direction: column; justify-content: center; align-items: center;
+                transition: right 0.6s var(--bezier-ease);
+            }
+            .main-nav.is-active { right: 0; }
+            .main-nav a { font-size: 2rem; }
+            .mobile-nav-toggle {
+                display: block; z-index: 1001;
+                background: none; border: none; cursor: pointer;
+            }
+            .hamburger-icon { color: var(--color-light); font-size: 1.5rem; }
+            .review-nav { display: none; }
+            .review-text { font-size: clamp(1.1rem, 5vw, 1.5rem); }
+            .rooms-overview-grid { grid-template-columns: 1fr; gap: 1.5rem;}
+            .section-title { margin-bottom: 3rem; }
+        }
+
+         @media (max-width: 600px) {
+             .footer-bento-grid { grid-template-columns: 1fr; }
+             .bento-box.logo, .bento-box.newsletter-cta, .bento-box.nav, .bento-box.contact, .bento-box.socials {
+                 grid-column: 1 / -1;
+             }
+         }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor"></div>
+
+    <header class="site-header">
+        <div class="header-logo"><a href="#" class="interactive">Ještěd</a></div>
+        <nav class="main-nav">
+            <a href="#" class="interactive">Domů</a>
+            <a href="#" class="interactive">Pokoje</a>
+            <a href="#" class="interactive">Restaurace</a>
+            <a href="#" class="interactive">Kontakt</a>
+        </nav>
+        <button class="mobile-nav-toggle interactive" aria-label="Toggle navigation">
+            <i class="fa-solid fa-bars hamburger-icon"></i>
+        </button>
+    </header>
+
+    <main>
+        
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <h1 class="main-headline">
+                    <span class="line-1">Pokoje</span>
+                    <span class="line-2">Nad Oblaky</span>
+                </h1>
+                <p>Ikona architektury, jedinečný hotelový zážitek.</p>
+            </div>
+            <div class="hero-scroll-arrow">
+                 <a href="#rooms-gallery-wrapper" class="scroll-link interactive">
+                    <span>Objevujte</span>
+                    <i class="fa-solid fa-arrow-down"></i>
+                </a>
+            </div>
+        </section>
+
+        <div id="rooms-gallery-wrapper">
+            <div class="gallery-nav-arrows">
+                <a href="#hero" class="gallery-nav-arrow interactive" aria-label="Přejít nahoru"><i class="fa-solid fa-arrow-up"></i></a>
+                <a href="#rooms-overview" class="gallery-nav-arrow interactive" aria-label="Přeskočit na přehled"><i class="fa-solid fa-arrow-down"></i></a>
+            </div>
+            <div id="rooms-gallery">
+                 <div class="room-panel" data-room-id="1"><div class="room-image-wrapper"><img src="https://i.postimg.cc/65vKzgMj/hotel-1.jpg" alt="Prostorné apartmá s výhledem na město"></div><div class="room-content"><p class="room-number">01</p><h2>Apartmá</h2><p class="description">Prožijte luxus v našem nejprostornějším apartmá. S klimatizací, vanou pro relaxaci a manželskou postelí 'king size' je toto útočiště navrženo pro maximální pohodlí.</p><ul class="room-details"><li><i class="fa-solid fa-bed"></i>King Bed</li><li><i class="fa-solid fa-water-ladder"></i>Vana</li><li><i class="fa-solid fa-fan"></i>Klimatizace</li></ul><div class="room-pricing"><p class="price">od <span>6200 Kč</span> / noc</p><a href="#" class="cta-button interactive">Rezervovat</a></div></div></div>
+                <div class="room-panel" data-room-id="2"><div class="room-image-wrapper"><img src="https://i.postimg.cc/zv9r8FGF/hotel-3.jpg" alt="Moderní a stylový pokoj typu Comfort"></div><div class="room-content"><p class="room-number">02</p><h2>Pokoj Comfort</h2><p class="description">Pokoje typu Comfort nabízí dokonalou rovnováhu mezi moderním designem a útulností. Ideální volba pro odpočinek po dni plném zážitků.</p><ul class="room-details"><li><i class="fa-solid fa-bed"></i>King Bed</li><li><i class="fa-solid fa-shower"></i>Sprcha</li><li><i class="fa-solid fa-tv"></i>TV</li></ul><div class="room-pricing"><p class="price">od <span>4200 Kč</span> / noc</p><a href="#" class="cta-button interactive">Rezervovat</a></div></div></div>
+                <div class="room-panel" data-room-id="3"><div class="room-image-wrapper"><img src="https://i.postimg.cc/KYNxBT0m/hotel-6.jpg" alt="Originální Retro pokoj dle návrhu O. Binara"></div><div class="room-content"><p class="room-number">03</p><h2>Pokoj Retro</h2><p class="description">Vraťte se v čase s našimi originálními pokoji Retro, navrženými architektem Otakarem Binarem. Zažijte autentickou atmosféru 70. let s moderním komfortem.</p><ul class="room-details"><li><i class="fa-solid fa-bed"></i>Manželská postel</li><li><i class="fa-solid fa-shower"></i>Sprcha</li><li><i class="fa-solid fa-palette"></i>Originální design</li></ul><div class="room-pricing"><p class="price">od <span>4150 Kč</span> / noc</p><a href="#" class="cta-button interactive">Rezervovat</a></div></div></div>
+                <div class="room-panel" data-room-id="4"><div class="room-image-wrapper"><img src="https://i.postimg.cc/2jJmQr7L/htel-2.jpg" alt="Útulný pokoj typu Economy"></div><div class="room-content"><p class="room-number">04</p><h2>Pokoj Economy</h2><p class="description">Praktická volba pro cestovatele. Pokoj nabízí soukromí s umyvadlem, zatímco sprcha a WC jsou sdílené na chodbě. K tomuto typu pokoje není k dispozici parkování.</p><ul class="room-details"><li><i class="fa-solid fa-bed"></i>King Bed</li><li><i class="fa-solid fa-sink"></i>Umyvadlo</li><li><i class="fa-solid fa-door-open"></i>Sdílená koupelna</li></ul><div class="room-pricing"><p class="price">od <span>2500 Kč</span> / noc</p><a href="#" class="cta-button interactive">Rezervovat</a></div></div></div>
+                <div class="room-panel" data-room-id="5"><div class="room-image-wrapper"><img src="https://i.postimg.cc/QtdsbMz1/htel-4.jpg" alt="Prostorný rodinný pokoj s více ložnicemi"></div><div class="room-content"><p class="room-number">05</p><h2>Pokoj Family</h2><p class="description">Ideální řešení pro rodiny. Dva samostatné pokoje spojené společenskou místností poskytují dostatek prostoru a soukromí až pro 6 osob.</p><ul class="room-details"><li><i class="fa-solid fa-users"></i>Až 6 hostů</li><li><i class="fa-solid fa-bed"></i>2 Ložnice</li><li><i class="fa-solid fa-couch"></i>Obývací část</li></ul><div class="room-pricing"><p class="price">od <span>10030 Kč</span> / noc</p><a href="#" class="cta-button interactive">Rezervovat</a></div></div></div>
+                <div class="room-panel" data-room-id="6"><div class="room-image-wrapper"><img src="https://i.postimg.cc/LXQS0pd7/htel-5.jpg" alt="Unikátní pokoj Director v bývalé kanceláři"></div><div class="room-content"><p class="room-number">06</p><h2>Pokoj Director</h2><p class="description">Ubytujte se v pokoji s příběhem. Tento unikátní prostor, vytvořený z bývalé kanceláře prvního ředitele hotelu z roku 1973, spojuje historii s exkluzivním komfortem.</p><ul class="room-details"><li><i class="fa-solid fa-bed"></i>King Bed</li><li><i class="fa-solid fa-briefcase"></i>Historický ráz</li><li><i class="fa-solid fa-mountain-sun"></i>Unikátní výhled</li></ul><div class="room-pricing"><p class="price">od <span>4100 Kč</span> / noc</p><a href="#" class="cta-button interactive">Rezervovat</a></div></div></div>
+            </div>
+        </div>
+
+        <section class="section" id="rooms-overview">
+            <div class="container">
+                <h2 class="section-title">Přehled Ubytování</h2>
+                <div class="rooms-overview-grid">
+                    <div class="room-card interactive"><div class="room-card-image"><img src="https://i.postimg.cc/65vKzgMj/hotel-1.jpg" alt="Apartmá"></div><div class="room-card-content"><h3>Apartmá</h3><p>Vrchol luxusu a prostoru s klimatizací a vanou.</p><a href="#" class="cta-button">od 6200 Kč</a></div></div>
+                    <div class="room-card interactive"><div class="room-card-image"><img src="https://i.postimg.cc/zv9r8FGF/hotel-3.jpg" alt="Pokoj Comfort"></div><div class="room-card-content"><h3>Comfort</h3><p>Dokonalá rovnováha mezi designem a útulností.</p><a href="#" class="cta-button">od 4200 Kč</a></div></div>
+                    <div class="room-card interactive"><div class="room-card-image"><img src="https://i.postimg.cc/KYNxBT0m/hotel-6.jpg" alt="Pokoj Retro"></div><div class="room-card-content"><h3>Retro</h3><p>Autentická atmosféra 70. let dle O. Binara.</p><a href="#" class="cta-button">od 4150 Kč</a></div></div>
+                    <div class="room-card interactive"><div class="room-card-image"><img src="https://i.postimg.cc/2jJmQr7L/htel-2.jpg" alt="Pokoj Economy"></div><div class="room-card-content"><h3>Economy</h3><p>Praktická volba pro cestovatele bez parkování.</p><a href="#" class="cta-button">od 2500 Kč</a></div></div>
+                    <div class="room-card interactive"><div class="room-card-image"><img src="https://i.postimg.cc/QtdsbMz1/htel-4.jpg" alt="Pokoj Family"></div><div class="room-card-content"><h3>Family</h3><p>Dva pokoje a společenská místnost pro 6 osob.</p><a href="#" class="cta-button">od 10030 Kč</a></div></div>
+                    <div class="room-card interactive"><div class="room-card-image"><img src="https://i.postimg.cc/LXQS0pd7/htel-5.jpg" alt="Pokoj Director"></div><div class="room-card-content"><h3>Director</h3><p>Pokoj s příběhem v bývalé kanceláři ředitele.</p><a href="#" class="cta-button">od 4100 Kč</a></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="reviews">
+            <div class="reviews-container">
+                <div class="review-quote-mark">“</div>
+                <div id="review-carousel">
+                    <div class="review-slide active"><p class="review-text">Pobyt v hotelu Ještěd je zážitek, který s vámi zůstane navždy. Architektonický skvost s dechberoucími výhledy a bezchybnými službami.</p><p class="review-author">- Martin P.</p></div>
+                    <div class="review-slide"><p class="review-text">Naprosto magické místo. Východ slunce nad mraky z pokoje byl nezapomenutelný. Personál byl neuvěřitelně vstřícný a profesionální.</p><p class="review-author">- Jana N.</p></div>
+                    <div class="review-slide"><p class="review-text">Večeře v restauraci byla gastronomickým nebem. Každý detail, od jídla po atmosféru, byl perfektní. Vrátíme se co nejdříve.</p><p class="review-author">- Tomáš a Eva</p></div>
+                </div>
+                <div class="review-nav"><button class="review-nav-btn prev interactive" aria-label="Předchozí recenze"><i class="fa-solid fa-chevron-left"></i></button><button class="review-nav-btn next interactive" aria-label="Další recenze"><i class="fa-solid fa-chevron-right"></i></button></div>
+            </div>
+        </section>
+
+        <section class="section information" id="info">
+             <div class="container">
+                <div class="section-title" style="font-size: clamp(2.5rem, 8vw, 6rem);">Informace</div>
+                 <div class="info-grid">
+                    <div class="info-item"><h3>Příjezd & Odjezd</h3><ul><li><strong>Check-in:</strong> 15:00 - 19:00</li><li><strong>Check-out:</strong> Do 10:30</li><li>Snídaně je vždy zahrnuta v ceně pobytu.</li></ul></div>
+                    <div class="info-item"><h3>Parkování</h3><ul><li>Hotel má omezenou kapacitu parkovacích míst.</li><li><strong>Rezervujte si místo online</strong> při rezervaci pobytu.</li><li><strong>Cena:</strong> 250 Kč / noc.</li><li>U pokojů <strong>Economy není</strong> parkovací místo k dispozici.</li></ul></div>
+                    <div class="info-item"><h3>Služby & Poplatky</h3><ul><li><strong>Místní poplatek:</strong> 40 Kč / osoba / noc.</li><li><strong>ZOO Liberec:</strong> 15% sleva pro naše hosty.</li><li><strong>Nabíjení elektromobilu:</strong> 700 Kč (nutno nahlásit 2 dny předem).</li></ul></div>
+                 </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bento-grid">
+                <div class="bento-box logo"><h3>JEŠTĚD</h3><p>Ikona nad oblaky. Cíl pro dobrodruhy, snílky a znalce designu.</p></div>
+                <div class="bento-box nav"><h4>Navigace</h4><ul><li><a href="#" class="interactive">Pokoje</a></li><li><a href="#" class="interactive">Restaurace</a></li><li><a href="#" class="interactive">Pro Firmy</a></li><li><a href="#" class="interactive">Náš Příběh</a></li></ul></div>
+                <div class="bento-box contact"><h4>Kontakt</h4><ul><li><a href="tel:+420731658045" class="interactive">+420 731 658 045</a></li><li><a href="mailto:recepce@jested.cz" class="interactive">recepce@jested.cz</a></li></ul></div>
+                <div class="bento-box socials"><h4>Sociální Sítě</h4><div class="social-links"><a href="#" aria-label="Instagram" class="interactive"><i class="fa-brands fa-instagram"></i></a><a href="#" aria-label="Facebook" class="interactive"><i class="fa-brands fa-facebook-f"></i></a><a href="#" aria-label="X" class="interactive"><i class="fa-brands fa-twitter"></i></a></div></div>
+                <div class="bento-box newsletter-cta interactive"><h4>Zůstaňte v Obraze</h4><p>Získejte exkluzivní nabídky a novinky přímo do vaší schránky.</p><form class="newsletter-form"><input type="email" placeholder="Váš email" required><button type="submit" aria-label="Odeslat">→</button></form></div>
+            </div>
+        </div>
+    </footer>
+    
+    <div class="footer-signoff">
+        <div class="footer-signoff-text">JEŠTĚD</div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 Hotel Ještěd. Všechna práva vyhrazena.</p></div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            const isDesktop = window.innerWidth > 1024;
+
+            // --- Header Scroll Effect ---
+            const header = document.querySelector('.site-header');
+            if (header) {
+                ScrollTrigger.create({
+                    start: 'top -80',
+                    end: 99999,
+                    toggleClass: {className: 'scrolled', targets: header}
+                });
+            }
+
+            // --- Mobile Navigation ---
+            const navToggle = document.querySelector('.mobile-nav-toggle');
+            const mainNav = document.querySelector('.main-nav');
+            if (navToggle && mainNav) {
+                navToggle.addEventListener('click', () => {
+                    mainNav.classList.toggle('is-active');
+                });
+            }
+
+            // --- Hero Text Animation ---
+            const heroTimeline = gsap.timeline({defaults: { ease: 'power3.out' }});
+            heroTimeline
+                .to('.main-headline .line-1', { clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)', y: 0, opacity: 1, duration: 1.2 })
+                .to('.main-headline .line-2', { clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)', y: 0, opacity: 1, duration: 1.2 }, "-=1")
+                .to('.hero p', { y: 0, opacity: 1, duration: 1 }, "-=0.8")
+                .to('.scroll-link', { opacity: 1, duration: 1 }, "-=0.5");
+
+
+            // --- Custom Cursor Logic ---
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                const cursor = document.querySelector('.custom-cursor');
+                if (cursor) {
+                    const interactiveElements = document.querySelectorAll('.interactive');
+                    const moveCursor = (e) => {
+                        gsap.to(cursor, { duration: 0.4, x: e.clientX, y: e.clientY, ease: 'power3.out' });
+                    };
+                    window.addEventListener('mousemove', moveCursor);
+                    interactiveElements.forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+                    });
+                }
+            }
+
+
+            // --- Room Gallery Scroll Animation (Desktop Only) ---
+            if (isDesktop) {
+                const gallery = document.querySelector("#rooms-gallery");
+                const galleryWrapper = document.querySelector("#rooms-gallery-wrapper");
+                if (gallery && galleryWrapper) {
+                    const roomPanels = gsap.utils.toArray(".room-panel");
+                    gsap.to(gallery, {
+                        x: () => -(gallery.scrollWidth - window.innerWidth),
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: galleryWrapper,
+                            pin: true,
+                            scrub: 1,
+                            snap: {
+                                snapTo: 1 / (roomPanels.length - 1),
+                                duration: { min: 0.2, max: 1 },
+                                ease: "power1.inOut"
+                            },
+                            end: () => "+=" + (gallery.scrollWidth - window.innerWidth)
+                        }
+                    });
+                }
+            }
+
+            // --- Reviews Carousel ---
+            const slides = document.querySelectorAll('.review-slide');
+            if (slides.length > 0) {
+                const prevBtn = document.querySelector('.review-nav-btn.prev');
+                const nextBtn = document.querySelector('.review-nav-btn.next');
+                let currentSlide = 0;
+                let reviewInterval;
+
+                function showSlide(index) {
+                    slides.forEach((slide) => slide.classList.remove('active'));
+                    slides[index].classList.add('active');
+                }
+
+                function nextSlide() {
+                    currentSlide = (currentSlide + 1) % slides.length;
+                    showSlide(currentSlide);
+                }
+                
+                function prevSlide() {
+                    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                    showSlide(currentSlide);
+                }
+
+                function startCarousel() {
+                    stopCarousel(); // Ensure no multiple intervals running
+                    reviewInterval = setInterval(nextSlide, 5000);
+                }
+
+                function stopCarousel() {
+                    clearInterval(reviewInterval);
+                }
+
+                if (prevBtn && nextBtn) {
+                    prevBtn.addEventListener('click', () => { prevSlide(); stopCarousel(); });
+                    nextBtn.addEventListener('click', () => { nextSlide(); stopCarousel(); });
+                }
+                startCarousel();
+            }
+
+
+            // --- Generic Fade-in Animations for other sections ---
+            const revealSections = document.querySelectorAll('#rooms-overview, #reviews, .information, .footer-signoff, .site-footer');
+            revealSections.forEach(el => {
+                 gsap.from(el, {
+                    opacity: 0,
+                    y: 60,
+                    duration: 1.2,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 85%',
+                        toggleActions: 'play none none none'
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

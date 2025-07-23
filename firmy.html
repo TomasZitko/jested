@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Ještěd - Pro Firmy</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* --- Ještěd Black & White Design System (z hotel.HTML) --- */
+        :root {
+            --font-display: 'Anton', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+            --color-light: #ffffff;
+            --color-muted: #999999;
+            --color-dark: #0F0F0F;
+            --color-darker: #050505;
+            --color-border: #222222;
+            --transition-duration: 0.5s;
+            --bezier-ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* --- Základní a globální styly --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-darker);
+            color: var(--color-light);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+         @media (hover: hover) and (pointer: fine) {
+            body {
+                cursor: none;
+            }
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+        
+        /* --- Vlastní kurzor --- */
+        .custom-cursor {
+            position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+            background-color: var(--color-light); border-radius: 50%;
+            pointer-events: none; transform: translate(-50%, -50%);
+            z-index: 10001; transition: width 0.3s var(--bezier-ease), height 0.3s var(--bezier-ease), background-color 0.3s var(--bezier-ease);
+        }
+        .custom-cursor.grow {
+            width: 70px; height: 70px; background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Hlavička stránky --- */
+        .site-header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.4s ease, padding 0.4s ease;
+        }
+        .site-header.scrolled {
+            background-color: rgba(15, 15, 15, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .header-logo a {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            text-decoration: none;
+            color: var(--color-light);
+            letter-spacing: 1px;
+        }
+        .main-nav { display: flex; gap: 2.5rem; }
+        .main-nav a {
+            color: var(--color-light); text-decoration: none;
+            text-transform: uppercase; font-size: 0.9rem;
+            font-weight: 500; position: relative;
+            padding: 0.5rem 0;
+        }
+        .main-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background-color: var(--color-light);
+            transition: width 0.4s var(--bezier-ease);
+        }
+        .main-nav a:hover::after, .main-nav a.active::after { width: 100%; }
+        .mobile-nav-toggle { display: none; }
+
+
+        /* --- Opakovaně použitelné komponenty --- */
+        .section { padding: 8rem 0; overflow: hidden; }
+        .cta-button {
+            display: inline-block; padding: 1rem 2.5rem; text-decoration: none;
+            font-weight: 500; border: 1px solid var(--color-border);
+            color: var(--color-light); transition: all 0.4s var(--bezier-ease);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        .cta-button:hover { background-color: var(--color-light); color: var(--color-darker); border-color: var(--color-light); }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 10vw, 8rem);
+            text-transform: uppercase; line-height: 0.9;
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+        
+        /* --- Hero sekce --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop') no-repeat center center/cover;
+            position: relative;
+        }
+        .hero-content { z-index: 2; padding: 1rem; }
+        .hero .main-headline {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            line-height: 1;
+            color: var(--color-light);
+        }
+        .hero .main-headline span {
+            display: block;
+            font-size: clamp(4rem, 12vw, 10rem);
+            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        .hero p {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 1rem;
+            font-weight: 300;
+            max-width: 45ch;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .hero-scroll-arrow {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        .scroll-link {
+            color: var(--color-light);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+        }
+        .scroll-link span {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+        .scroll-link i { font-size: 1.5rem; animation: bounce 2s infinite; }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(10px); }
+            60% { transform: translateY(5px); }
+        }
+
+        /* --- Sekce Přednosti --- */
+        .features-section {
+            background-color: var(--color-dark);
+            padding: 6rem 0;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+        .feature-item {
+            padding: 2rem;
+            border: 1px solid var(--color-border);
+            transition: background-color 0.4s var(--bezier-ease);
+        }
+        .feature-item:hover {
+            background-color: var(--color-darker);
+        }
+        .feature-item i {
+            font-size: 3rem;
+            color: var(--color-light);
+            margin-bottom: 1.5rem;
+        }
+        .feature-item h3 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .feature-item p {
+            color: var(--color-muted);
+            line-height: 1.6;
+        }
+
+        /* --- Sekce Varianty (PŘEPRACOVÁNO) --- */
+        .variants-section {
+            background-color: var(--color-darker);
+        }
+        .variants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        .variant-card {
+            background-color: var(--color-dark);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s var(--bezier-ease), box-shadow 0.4s var(--bezier-ease);
+        }
+        .variant-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .variant-image {
+            height: 280px;
+            overflow: hidden;
+        }
+        .variant-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s var(--bezier-ease);
+        }
+        .variant-card:hover .variant-image img {
+            transform: scale(1.08);
+        }
+        .variant-content {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .variant-content .variant-label {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            color: var(--color-muted);
+            margin-bottom: 0.5rem;
+        }
+        .variant-content h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 4vw, 3rem);
+            text-transform: uppercase;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        .variant-content > p {
+            color: var(--color-muted);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            flex-grow: 1;
+        }
+        .variant-specs {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .variant-specs li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 500;
+        }
+        .variant-specs i {
+            font-size: 1.1rem;
+            color: var(--color-muted);
+            width: 20px;
+            text-align: center;
+        }
+        .variant-footer {
+            border-top: 1px solid var(--color-border);
+            padding-top: 1.5rem;
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .variant-footer .price {
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--color-light);
+            line-height: 1.2;
+        }
+        .variant-footer .price span {
+            font-size: 0.9rem;
+            color: var(--color-muted);
+            display: block;
+            font-weight: 400;
+        }
+        .variant-footer .cta-button {
+            padding: 0.8rem 1.8rem;
+        }
+
+        /* --- Sekce Občerstvení --- */
+        .catering-section {
+            background-color: var(--color-dark);
+            text-align: center;
+        }
+        .catering-section p {
+            max-width: 60ch;
+            margin: 0 auto 4rem auto;
+            color: var(--color-muted);
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+        .catering-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .catering-item {
+            position: relative;
+            overflow: hidden;
+            height: 400px;
+        }
+        .catering-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s var(--bezier-ease);
+        }
+        .catering-item:hover img {
+            transform: scale(1.1);
+        }
+        .catering-item .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            display: flex;
+            align-items: flex-end;
+            padding: 2rem;
+        }
+        .catering-item h3 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            text-transform: uppercase;
+            color: var(--color-light);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s var(--bezier-ease);
+        }
+        .catering-item:hover h3 {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* --- Sekce Kontakt --- */
+        .contact-section {
+            background: var(--color-darker);
+            text-align: center;
+        }
+        .contact-content {
+            max-width: 700px;
+            margin: 0 auto;
+            border: 1px solid var(--color-border);
+            padding: 4rem;
+        }
+        .contact-content .contact-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 2rem;
+            border: 3px solid var(--color-border);
+        }
+        .contact-content h2 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .contact-content p {
+            color: var(--color-muted);
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+        }
+        .contact-content .contact-name {
+            font-weight: 700;
+            color: var(--color-light);
+            font-size: 1.2rem;
+        }
+
+        /* --- Patička --- */
+        .footer-signoff {
+            padding: 8rem 0; 
+            text-align: center;
+            background-color: var(--color-dark);
+        }
+        .footer-signoff-text {
+            font-family: var(--font-display);
+            font-size: clamp(10rem, 22vw, 25rem);
+            line-height: 0.8;
+            text-transform: uppercase;
+            color: var(--color-border);
+        }
+        .site-footer {
+            padding: 8rem 0 0 0;
+            background-color: var(--color-dark);
+            border-top: 1px solid var(--color-border);
+        }
+        .footer-bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        .bento-box {
+            background-color: var(--color-darker);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .bento-box:hover { background-color: #1a1a1a; border-color: #333; }
+        .bento-box.logo { grid-column: 1 / 3; }
+        .bento-box.nav { grid-column: 3 / 5; }
+        .bento-box.contact { grid-column: 1 / 2; }
+        .bento-box.socials { grid-column: 2 / 3; }
+        .bento-box.newsletter-cta { grid-column: 3 / 5; }
+        .bento-box h3 { font-family: var(--font-display); font-size: 3rem; text-transform: uppercase; }
+        .bento-box p { color: var(--color-muted); max-width: 40ch; margin-top: 1rem; }
+        .bento-box h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-muted); margin-bottom: 1.5rem; }
+        .bento-box ul { list-style: none; }
+        .bento-box a { color: var(--color-light); text-decoration: none; line-height: 2.2; font-weight: 500; }
+        .bento-box a:hover { text-decoration: underline; }
+        .bento-box .social-links { display: flex; gap: 1.5rem; }
+        .bento-box .social-links a { font-size: 1.5rem; }
+        .bento-box.newsletter-cta { background: var(--color-light); color: var(--color-darker); }
+        .bento-box.newsletter-cta h4 { color: #555; }
+        .bento-box.newsletter-cta p { color: #333; margin-bottom: 1.5rem; }
+        .newsletter-form { display: flex; }
+        .newsletter-form input {
+            flex-grow: 1; border: 1px solid #ccc; background: #fff;
+            padding: 0.8rem 1rem; color: #000; font-size: 1rem;
+            border-radius: 6px 0 0 6px;
+        }
+        .newsletter-form button {
+            background: var(--color-darker); color: var(--color-light); border: none;
+            padding: 0.8rem 1.5rem; font-weight: 500; cursor: pointer;
+            border-radius: 0 6px 6px 0;
+        }
+        .footer-bottom {
+            text-align: center; padding: 2rem 0;
+            border-top: 1px solid var(--color-border); color: var(--color-muted);
+            font-size: 0.9rem;
+            background: var(--color-dark);
+        }
+        
+        /* --- Responzivní design --- */
+        @media (max-width: 1024px) {
+            .footer-bento-grid { grid-template-columns: 1fr 1fr; }
+            .bento-box.logo, .bento-box.nav, .bento-box.newsletter-cta { grid-column: 1 / -1; }
+            .bento-box.contact { grid-column: 1 / 2; }
+            .bento-box.socials { grid-column: 2 / 3; }
+        }
+
+        @media (max-width: 768px) {
+            .section { padding: 6rem 0; }
+            .main-nav {
+                position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+                background-color: var(--color-darker);
+                flex-direction: column; justify-content: center; align-items: center;
+                transition: right 0.6s var(--bezier-ease);
+            }
+            .main-nav.is-active { right: 0; }
+            .main-nav a { font-size: 2rem; }
+            .mobile-nav-toggle {
+                display: block; z-index: 1001;
+                background: none; border: none; cursor: pointer;
+            }
+            .hamburger-icon { color: var(--color-light); font-size: 1.5rem; }
+            .section-title { margin-bottom: 3rem; }
+            .contact-content { padding: 2rem; }
+            .variants-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+         @media (max-width: 600px) {
+             .footer-bento-grid { grid-template-columns: 1fr; }
+             .bento-box.logo, .bento-box.newsletter-cta, .bento-box.nav, .bento-box.contact, .bento-box.socials {
+                 grid-column: 1 / -1;
+             }
+             .catering-grid {
+                grid-template-columns: 1fr;
+             }
+         }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor"></div>
+
+    <header class="site-header">
+        <div class="header-logo"><a href="#" class="interactive">Ještěd</a></div>
+        <nav class="main-nav">
+            <a href="hotel.html" class="interactive">Hotel</a>
+            <a href="#" class="interactive">Restaurace</a>
+            <a href="firmy.html" class="interactive active">Pro Firmy</a>
+            <a href="#" class="interactive">Kontakt</a>
+        </nav>
+        <button class="mobile-nav-toggle interactive" aria-label="Toggle navigation">
+            <i class="fa-solid fa-bars hamburger-icon"></i>
+        </button>
+    </header>
+
+    <main>
+        
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <h1 class="main-headline">
+                    <span class="line-1">Vaše Akce</span>
+                    <span class="line-2">Nad Oblaky</span>
+                </h1>
+                <p>Ještěd je unikátní lokalitou pro vaše firemní akce. Posuňte své eventy na vyšší úroveň.</p>
+            </div>
+            <div class="hero-scroll-arrow">
+                 <a href="#features" class="scroll-link interactive">
+                    <span>Objevujte</span>
+                    <i class="fa-solid fa-arrow-down"></i>
+                </a>
+            </div>
+        </section>
+
+        <section class="features-section section-fade-in" id="features">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <i class="fa-solid fa-star"></i>
+                        <h3>Zážitek</h3>
+                        <p>Jedinečná atmosféra a dechberoucí výhledy, které z vaší akce udělají nezapomenutelnou událost.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa-solid fa-utensils"></i>
+                        <h3>Kuchyně</h3>
+                        <p>Prvotřídní gastronomie připravená našimi šéfkuchaři, od coffee breaků po slavnostní rauty.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa-solid fa-handshake-angle"></i>
+                        <h3>Servis</h3>
+                        <p>Náš profesionální tým se postará o každý detail a zajistí hladký průběh celé vaší akce.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="variants-section section" id="variants">
+            <div class="container">
+                <h2 class="section-title section-fade-in">Možnosti Pronájmu</h2>
+                <div class="variants-grid">
+
+                    <!-- Karta Hotel -->
+                    <div class="variant-card section-fade-in">
+                        <div class="variant-image">
+                            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1932&auto=format&fit=crop" alt="Velký firemní event v moderním prostoru">
+                        </div>
+                        <div class="variant-content">
+                            <p class="variant-label">Exkluzivní pronájem</p>
+                            <h2>Hotel</h2>
+                            <p>Celý Ještěd exkluzivně pouze pro vás. Maximální soukromí a neomezené možnosti pro vaši akci.</p>
+                            <ul class="variant-specs">
+                                <li><i class="fa-solid fa-users"></i>Až 250 hostů (raut)</li>
+                                <li><i class="fa-solid fa-bed"></i>Ubytování pro 50 hostů</li>
+                                <li><i class="fa-solid fa-key"></i>Naprostá exkluzivita</li>
+                            </ul>
+                            <div class="variant-footer">
+                                <p class="price"><span>Cena</span>Individuální</p>
+                                <a href="#contact" class="cta-button interactive">Poptat</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Karta Restaurace -->
+                    <div class="variant-card section-fade-in">
+                        <div class="variant-image">
+                            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop" alt="Elegantně prostřené stoly v restauraci">
+                        </div>
+                        <div class="variant-content">
+                            <p class="variant-label">Společenská událost</p>
+                            <h2>Restaurace</h2>
+                            <p>Ideální pro brunch, odpolední setkání nebo večerní raut v srdci Ještědu s nádherným výhledem.</p>
+                             <ul class="variant-specs">
+                                <li><i class="fa-solid fa-users"></i>Až 120 hostů</li>
+                                <li><i class="fa-solid fa-chair"></i>Plně k sezení</li>
+                                <li><i class="fa-solid fa-clock"></i>Akce do 22:00</li>
+                            </ul>
+                            <div class="variant-footer">
+                                <p class="price"><span>Cena</span>Individuální</p>
+                                <a href="#contact" class="cta-button interactive">Poptat</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Karta Salónek -->
+                    <div class="variant-card section-fade-in">
+                        <div class="variant-image">
+                            <img src="https://images.unsplash.com/photo-1590650213764-326b43a7d433?q=80&w=2070&auto=format&fit=crop" alt="Malá zasedací místnost s retro designem">
+                        </div>
+                        <div class="variant-content">
+                            <p class="variant-label">Privátní jednání</p>
+                            <h2>Salónek</h2>
+                            <p>Komorní prostor pro formální oběd, uzavřené jednání nebo prezentaci v autentickém retro stylu.</p>
+                             <ul class="variant-specs">
+                                <li><i class="fa-solid fa-users"></i>Do 12 hostů</li>
+                                <li><i class="fa-solid fa-lock"></i>Maximální soukromí</li>
+                                <li><i class="fa-solid fa-gem"></i>Originální design 70. let</li>
+                            </ul>
+                            <div class="variant-footer">
+                                <p class="price"><span>od</span>3 000 Kč</p>
+                                <a href="#contact" class="cta-button interactive">Poptat</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="catering-section section" id="catering">
+            <div class="container">
+                <h2 class="section-title section-fade-in">Nabídka Občerstvení</h2>
+                <p class="section-fade-in">V našem portfoliu jsou různé varianty rautů, brunch nebo kávové pauzy. Připravíme číši vína, welcome drink nebo několikachodové menu, servírované v salónku.</p>
+                <div class="catering-grid section-fade-in">
+                    <div class="catering-item interactive">
+                        <img src="https://images.unsplash.com/photo-1505252585461-1457eb4b2f66?q=80&w=2070&auto=format&fit=crop" alt="Bohatý brunch bufet">
+                        <div class="overlay"><h3>Brunch & Coffee Breaks</h3></div>
+                    </div>
+                    <div class="catering-item interactive">
+                        <img src="https://images.unsplash.com/photo-1621969799349-8c13534354a3?q=80&w=1964&auto=format&fit=crop" alt="Elegantní rautové stoly">
+                        <div class="overlay"><h3>Večerní Rauty</h3></div>
+                    </div>
+                    <div class="catering-item interactive">
+                        <img src="https://images.unsplash.com/photo-1579623341033-76916d75a443?q=80&w=1974&auto=format&fit=crop" alt="Servírované několikachodové menu">
+                        <div class="overlay"><h3>Servírované Menu</h3></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section section" id="contact">
+            <div class="container section-fade-in">
+                <div class="contact-content">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1976&auto=format&fit=crop" alt="Portrét ředitelky hotelu Alice Válkové" class="contact-avatar">
+                    <h2>Kontaktujte Nás</h2>
+                    <p>Pro rezervaci termínu, dotaz na dostupnost nebo individuální nabídku prosím kontaktujte ředitelku hotelu.</p>
+                    <p class="contact-name">Alice Válková</p>
+                    <a href="mailto:recepce@jested.cz" class="cta-button interactive">Odeslat Dotaz</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bento-grid">
+                <div class="bento-box logo"><h3>JEŠTĚD</h3><p>Ikona nad oblaky. Cíl pro dobrodruhy, snílky a znalce designu.</p></div>
+                <div class="bento-box nav"><h4>Navigace</h4><ul><li><a href="hotel.html" class="interactive">Hotel</a></li><li><a href="#" class="interactive">Restaurace</a></li><li><a href="firmy.html" class="interactive">Pro Firmy</a></li><li><a href="#" class="interactive">Náš Příběh</a></li></ul></div>
+                <div class="bento-box contact"><h4>Kontakt</h4><ul><li><a href="tel:+420731658045" class="interactive">+420 731 658 045</a></li><li><a href="mailto:recepce@jested.cz" class="interactive">recepce@jested.cz</a></li></ul></div>
+                <div class="bento-box socials"><h4>Sociální Sítě</h4><div class="social-links"><a href="#" aria-label="Instagram" class="interactive"><i class="fa-brands fa-instagram"></i></a><a href="#" aria-label="Facebook" class="interactive"><i class="fa-brands fa-facebook-f"></i></a><a href="#" aria-label="X" class="interactive"><i class="fa-brands fa-twitter"></i></a></div></div>
+                <div class="bento-box newsletter-cta interactive"><h4>Zůstaňte v Obraze</h4><p>Získejte exkluzivní nabídky a novinky přímo do vaší schránky.</p><form class="newsletter-form"><input type="email" placeholder="Váš email" required><button type="submit" aria-label="Odeslat">→</button></form></div>
+            </div>
+        </div>
+    </footer>
+    
+    <div class="footer-signoff">
+        <div class="footer-signoff-text">JEŠTĚD</div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 Hotel Ještěd. Všechna práva vyhrazena.</p></div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // --- Efekt pro hlavičku při skrolování ---
+            const header = document.querySelector('.site-header');
+            if (header) {
+                ScrollTrigger.create({
+                    start: 'top -80',
+                    end: 99999,
+                    toggleClass: {className: 'scrolled', targets: header}
+                });
+            }
+
+            // --- Mobilní navigace ---
+            const navToggle = document.querySelector('.mobile-nav-toggle');
+            const mainNav = document.querySelector('.main-nav');
+            if (navToggle && mainNav) {
+                navToggle.addEventListener('click', () => {
+                    mainNav.classList.toggle('is-active');
+                });
+            }
+
+            // --- Animace textu v hero sekci ---
+            const heroTimeline = gsap.timeline({defaults: { ease: 'power3.out' }});
+            heroTimeline
+                .to('.main-headline .line-1', { clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)', y: 0, opacity: 1, duration: 1.2 })
+                .to('.main-headline .line-2', { clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)', y: 0, opacity: 1, duration: 1.2 }, "-=1")
+                .to('.hero p', { y: 0, opacity: 1, duration: 1 }, "-=0.8")
+                .to('.scroll-link', { opacity: 1, duration: 1 }, "-=0.5");
+
+
+            // --- Vlastní kurzor ---
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                const cursor = document.querySelector('.custom-cursor');
+                if (cursor) {
+                    const interactiveElements = document.querySelectorAll('.interactive');
+                    const moveCursor = (e) => {
+                        gsap.to(cursor, { duration: 0.4, x: e.clientX, y: e.clientY, ease: 'power3.out' });
+                    };
+                    window.addEventListener('mousemove', moveCursor);
+                    interactiveElements.forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+                    });
+                }
+            }
+            
+            // --- Animace pro sekce při skrolování ---
+            const revealSections = document.querySelectorAll('.section-fade-in');
+            revealSections.forEach(el => {
+                 gsap.from(el, {
+                    opacity: 0,
+                    y: 60,
+                    duration: 1.2,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 85%',
+                        toggleActions: 'play none none none'
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
